@@ -1,0 +1,3 @@
+// Export all screens from this file for easy imports
+export { default as HomeScreen } from './HomeScreen';
+export { default as SplashScreen } from './SplashScreen'; 
