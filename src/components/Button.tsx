@@ -33,7 +33,8 @@ export default function Button({
     styles.text,
     styles[`${variant}Text`],
     styles[`${size}Text`],
-    disabled && styles.disabledText,
+    // Only apply disabledText for non-primary variants to maintain consistent color
+    disabled && variant !== 'primary' && styles.disabledText,
     textStyle,
   ];
 
@@ -51,7 +52,7 @@ export default function Button({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: 8,
+    borderRadius: 24, // Increased from 8 to 16 for more rounded corners
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
