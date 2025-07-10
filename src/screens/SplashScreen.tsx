@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Animated, Dimensions, Image } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../utils';
+import splashLogo from '../assets/images/splash-logo.webp';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -46,7 +47,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
         ]}
       >
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>iGarage</Text>
+          <Image source={splashLogo} style={styles.logoImage} resizeMode="contain" />
         </View>
         <Text style={styles.tagline}>Your trusted garage finder</Text>
       </Animated.View>
@@ -71,25 +72,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   logoContainer: {
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.lg,
-    borderRadius: 20,
     marginBottom: SPACING.lg,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  logoText: {
-    fontSize: FONT_SIZES.xxxl + 8, // Slightly larger for splash
-    fontWeight: 'bold',
-    color: COLORS.text.primary,
-    letterSpacing: 1,
+  logoImage: {
+    width: 200,
+    height: 200,
   },
   tagline: {
     fontSize: FONT_SIZES.lg,
