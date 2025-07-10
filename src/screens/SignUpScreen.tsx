@@ -40,9 +40,10 @@ interface SignUpData {
 
 interface SignUpScreenProps {
   onNavigateToLogin?: () => void;
+  onNavigateToHome?: () => void;
 }
 
-export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
+export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: SignUpScreenProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -221,10 +222,14 @@ export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
 
     setIsLoading(true);
     
+    // TODO: Replace with actual API call when Spring Boot API is created
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      Alert.alert('Success', 'Sign up functionality will be implemented with Spring Boot API');
+      // TODO: After API integration, navigate to HomeScreen on successful signup
+      if (onNavigateToHome) {
+        onNavigateToHome();
+      }
     }, 1000);
   };
 
