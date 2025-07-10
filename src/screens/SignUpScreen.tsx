@@ -330,8 +330,8 @@ export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
       
       <View style={styles.header}>
         <Image source={loginLogo} style={styles.logoImage} resizeMode="contain" />
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Join iGarage and start managing your garage</Text>
+        <Text style={styles.title}>Welcome To iGarage</Text>
+        <Text style={styles.subtitle}>JStart managing your garage</Text>
       </View>
 
       <View style={styles.form}>
@@ -684,8 +684,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxl,
   },
   logoImage: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
     marginBottom: SPACING.md,
   },
   title: {

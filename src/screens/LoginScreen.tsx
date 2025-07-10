@@ -62,13 +62,15 @@ export default function LoginScreen({ onNavigateToSignUp }: LoginScreenProps) {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          bounces={false}
+          scrollEnabled={false}
         >
           {/* Header */}
           <View style={styles.header}>
             <Image source={loginLogo} style={styles.logoImage} resizeMode="contain" />
-            <Text style={styles.welcomeText}>Welcome back!</Text>
+            <Text style={styles.welcomeText}>Welcome Back</Text>
             <Text style={styles.subtitleText}>
-              Sign in to your account to continue
+              Don't forget to sign in
             </Text>
           </View>
 
@@ -117,16 +119,16 @@ export default function LoginScreen({ onNavigateToSignUp }: LoginScreenProps) {
               disabled={isLoading}
               style={styles.loginButton}
             />
-          </View>
 
-          {/* Sign Up Link */}
-          <View style={styles.signUpContainer}>
-            <Text style={styles.signUpText}>
-              New to iGarage?{' '}
-              <Text style={styles.signUpLink} onPress={handleSignUp}>
-                Sign up
+            {/* Sign Up Link */}
+            <View style={styles.signUpContainer}>
+              <Text style={styles.signUpText}>
+                New to iGarage?{' '}
+                <Text style={styles.signUpLink} onPress={handleSignUp}>
+                  Sign up
+                </Text>
               </Text>
-            </Text>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -143,9 +145,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
+    flex: 1,
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xxl,
+    paddingTop: SPACING.xxl + 40,
     paddingBottom: SPACING.xl,
   },
   header: {
@@ -215,8 +217,7 @@ const styles = StyleSheet.create({
   },
   signUpContainer: {
     alignItems: 'center',
-    marginTop: 'auto',
-    paddingTop: SPACING.xl,
+    marginTop: SPACING.lg,
   },
   signUpText: {
     fontSize: FONT_SIZES.md,
