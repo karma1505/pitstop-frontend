@@ -16,7 +16,11 @@ import { COLORS, SPACING, FONT_SIZES } from '../utils';
 import { Button } from '../components';
 import loginLogo from '../assets/images/login-logo.webp';
 
-export default function LoginScreen() {
+interface LoginScreenProps {
+  onNavigateToSignUp?: () => void;
+}
+
+export default function LoginScreen({ onNavigateToSignUp }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,8 +41,11 @@ export default function LoginScreen() {
   };
 
   const handleSignUp = () => {
-    // TODO: Navigate to sign up screen
-    Alert.alert('Sign Up', 'Sign up screen will be created later');
+    if (onNavigateToSignUp) {
+      onNavigateToSignUp();
+    } else {
+      Alert.alert('Sign Up', 'Sign up screen will be created later');
+    }
   };
 
   const handleForgotPassword = () => {
@@ -195,6 +202,16 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: SPACING.md,
+    height: 56,
+    borderRadius: 28,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   signUpContainer: {
     alignItems: 'center',
