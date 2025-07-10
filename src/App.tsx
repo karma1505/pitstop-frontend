@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { HomeScreen, SplashScreen } from './screens';
+import { HomeScreen, SplashScreen, LoginScreen } from './screens';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <>
-      <HomeScreen />
+      <LoginScreen />
       <StatusBar style="light" />
     </>
   );
