@@ -4,7 +4,7 @@ import { HomeScreen, SplashScreen, LoginScreen, SignUpScreen } from './screens';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home'>('login');
 
   const handleSplashFinish = () => {
     setShowSplash(false);
@@ -16,6 +16,10 @@ export default function App() {
 
   const handleNavigateToLogin = () => {
     setCurrentScreen('login');
+  };
+
+  const handleNavigateToHome = () => {
+    setCurrentScreen('home');
   };
 
   if (showSplash) {
@@ -30,7 +34,16 @@ export default function App() {
   if (currentScreen === 'signup') {
     return (
       <>
-        <SignUpScreen onNavigateToLogin={handleNavigateToLogin} />
+        <SignUpScreen onNavigateToLogin={handleNavigateToLogin} onNavigateToHome={handleNavigateToHome} />
+        <StatusBar style="light" />
+      </>
+    );
+  }
+
+  if (currentScreen === 'home') {
+    return (
+      <>
+        <HomeScreen />
         <StatusBar style="light" />
       </>
     );
@@ -38,7 +51,7 @@ export default function App() {
 
   return (
     <>
-      <LoginScreen onNavigateToSignUp={handleNavigateToSignUp} />
+      <LoginScreen onNavigateToSignUp={handleNavigateToSignUp} onNavigateToHome={handleNavigateToHome} />
       <StatusBar style="light" />
     </>
   );

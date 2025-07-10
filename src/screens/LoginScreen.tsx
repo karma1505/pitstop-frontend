@@ -18,9 +18,10 @@ import loginLogo from '../assets/images/login-logo.webp';
 
 interface LoginScreenProps {
   onNavigateToSignUp?: () => void;
+  onNavigateToHome?: () => void;
 }
 
-export default function LoginScreen({ onNavigateToSignUp }: LoginScreenProps) {
+export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +34,14 @@ export default function LoginScreen({ onNavigateToSignUp }: LoginScreenProps) {
 
     setIsLoading(true);
     
+    // TODO: Replace with actual API call when Spring Boot API is created
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      Alert.alert('Success', 'Login functionality will be implemented with Spring Boot API');
+      // TODO: After API integration, navigate to HomeScreen on successful login
+      if (onNavigateToHome) {
+        onNavigateToHome();
+      }
     }, 1000);
   };
 
