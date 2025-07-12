@@ -22,6 +22,7 @@ import {
 } from '../utils/indianAddressData';
 import Icon from 'react-native-vector-icons/Ionicons';
 import loginLogo from '../assets/images/login-logo.webp';
+import { useAuth } from '../context';
 
 interface SignUpData {
   firstName: string;
@@ -45,9 +46,9 @@ interface SignUpScreenProps {
 
 export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: SignUpScreenProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { register, loading } = useAuth();
   const [formData, setFormData] = useState<SignUpData>({
     firstName: '',
     lastName: '',
@@ -220,17 +221,26 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
   const handleSignUp = async () => {
     if (!validatePage2()) return;
 
-    setIsLoading(true);
-    
-    // TODO: Replace with actual API call when Spring Boot API is created
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // TODO: After API integration, navigate to HomeScreen on successful signup
-      if (onNavigateToHome) {
-        onNavigateToHome();
+    try {
+      const success = await register(formData);
+      
+      if (success) {
+        Alert.alert('Success', 'Registration successful!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              if (onNavigateToHome) {
+                onNavigateToHome();
+              }
+            }
+          }
+        ]);
+      } else {
+        Alert.alert('Error', 'Registration failed. Please try again.');
       }
-    }, 1000);
+    } catch (error) {
+      Alert.alert('Error', 'Registration failed. Please check your connection and try again.');
+    }
   };
 
   const isPage1Complete = () => {
@@ -598,9 +608,9 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
 
         <View style={styles.signUpButtonContainer}>
           <Button
-            title={isLoading ? 'Creating Account...' : 'Sign Up'}
+            title={loading ? 'Creating Account...' : 'Sign Up'}
             onPress={handleSignUp}
-            disabled={isLoading}
+            disabled={loading}
             style={styles.signUpButton}
           />
         </View>

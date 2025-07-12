@@ -7,9 +7,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../utils';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useAuth } from '../context';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -124,6 +126,7 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => (
 
 export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState('home');
+  const { user, logout } = useAuth();
 
   const handleTabPress = (tab: string) => {
     setActiveTab(tab);
@@ -136,11 +139,48 @@ export default function HomeScreen() {
     // TODO: Navigate to expanded view and switch to myGarage
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Dashboard</Text>
-        <Text style={styles.headerSubtitle}>Welcome back, Garage Owner!</Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerTitle}>Dashboard</Text>
+            <Text style={styles.headerSubtitle}>
+              Welcome back, {user?.firstName || 'Garage Owner'}!
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Icon name="log-out-outline" size={24} color={COLORS.error} />
+          </TouchableOpacity>
+        </View>
+        
+        {user && (
+          <View style={styles.userInfo}>
+            <Text style={styles.userInfoText}>
+              {user.garageName} • {user.city}, {user.state}
+            </Text>
+          </View>
+        )}
       </View>
 
       <ScrollView 
@@ -234,6 +274,12 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.xxl,
     paddingBottom: SPACING.md,
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
   headerTitle: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '600',
@@ -243,6 +289,21 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: FONT_SIZES.md,
     color: COLORS.text.secondary,
+  },
+  logoutButton: {
+    padding: SPACING.sm,
+  },
+  userInfo: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    padding: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  userInfoText: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.text.secondary,
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
