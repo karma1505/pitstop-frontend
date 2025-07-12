@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../utils';
 import { Button } from '../components';
+import { useAuth } from '../context';
 import loginLogo from '../assets/images/login-logo.webp';
 
 interface LoginScreenProps {
@@ -24,7 +25,7 @@ interface LoginScreenProps {
 export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, loading } = useAuth();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -32,17 +33,26 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
       return;
     }
 
-    setIsLoading(true);
-    
-    // TODO: Replace with actual API call when Spring Boot API is created
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // TODO: After API integration, navigate to HomeScreen on successful login
-      if (onNavigateToHome) {
-        onNavigateToHome();
+    try {
+      const success = await login(email.trim(), password);
+      
+      if (success) {
+        Alert.alert('Success', 'Login successful!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              if (onNavigateToHome) {
+                onNavigateToHome();
+              }
+            }
+          }
+        ]);
+      } else {
+        Alert.alert('Error', 'Invalid email or password. Please try again.');
       }
-    }, 1000);
+    } catch (error) {
+      Alert.alert('Error', 'Login failed. Please check your connection and try again.');
+    }
   };
 
   const handleSignUp = () => {
@@ -92,6 +102,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                editable={!loading}
               />
             </View>
 
@@ -106,6 +117,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
                 secureTextEntry
                 autoCapitalize="none"
                 autoCorrect={false}
+                editable={!loading}
               />
             </View>
 
@@ -113,15 +125,16 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
             <TouchableOpacity
               style={styles.forgotPasswordContainer}
               onPress={handleForgotPassword}
+              disabled={loading}
             >
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
 
             {/* Login Button */}
             <Button
-              title={isLoading ? 'Signing in...' : 'Sign In'}
+              title={loading ? 'Signing in...' : 'Sign In'}
               onPress={handleLogin}
-              disabled={isLoading}
+              disabled={loading}
               style={styles.loginButton}
             />
 
