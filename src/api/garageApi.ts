@@ -1,6 +1,43 @@
 // API service for garage-related endpoints
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.example.com';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.240.63.177:8080/api/v1';
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  state: string;
+  city: string;
+  pincode: string;
+  mobileNumber: string;
+  garageName: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+  userInfo: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    garageName: string;
+    state: string;
+    city: string;
+    createdAt: string;
+  };
+  message: string;
+  success: boolean;
+}
 
 export class GarageApi {
   private static async request<T>(
@@ -20,10 +57,26 @@ export class GarageApi {
     const response = await fetch(url, config);
     
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `API Error: ${response.status} ${response.statusText}`);
     }
     
     return response.json();
+  }
+
+  // Authentication methods
+  static async login(credentials: LoginRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/admin/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+  }
+
+  static async register(userData: RegisterRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/admin/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
   }
 
   // Example API methods
