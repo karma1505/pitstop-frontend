@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { COLORS } from '../utils/constants';
+import { useTheme } from '../context/ThemeContext';
 
 interface AddressDropdownProps {
   label: string;
@@ -36,6 +36,7 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
   disabled = false,
   disableSearch = false,
 }) => {
+  const { colors } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredOptions, setFilteredOptions] = useState<string[]>(options);
@@ -72,17 +73,18 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>
+      <Text style={[styles.label, { color: colors.text }]}>
         {label}
-        {required && <Text style={styles.required}> *</Text>}
+        {required && <Text style={[styles.required, { color: colors.error }]}> *</Text>}
       </Text>
       
       <View style={styles.dropdownContainer}>
         <TouchableOpacity
           style={[
             styles.inputContainer,
-            error ? styles.inputError : null,
-            disabled ? styles.inputDisabled : null,
+            { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder },
+            error && { borderColor: colors.error },
+            disabled && { backgroundColor: colors.surface, borderColor: colors.outline },
           ]}
           onPress={handleOpen}
           disabled={disabled}
@@ -90,8 +92,9 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
           <Text
             style={[
               styles.inputText,
-              !value && styles.placeholder,
-              disabled && styles.textDisabled,
+              { color: colors.inputText },
+              !value && { color: colors.inputPlaceholder },
+              disabled && { color: colors.textTertiary },
             ]}
           >
             {value || placeholder}
@@ -99,7 +102,7 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
           <Icon
             name={isOpen ? 'chevron-up' : 'chevron-down'}
             size={20}
-            color="#666"
+            color={colors.textSecondary}
           />
         </TouchableOpacity>
 
@@ -108,8 +111,9 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
             {!disableSearch && (
               <TextInput
                 ref={inputRef}
-                style={styles.searchInput}
+                style={[styles.searchInput, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }]}
                 placeholder={`Search ${label.toLowerCase()}...`}
+                placeholderTextColor={colors.inputPlaceholder}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 autoFocus
@@ -124,10 +128,10 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
               {filteredOptions.map((item, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={styles.optionItem}
+                  style={[styles.optionItem, { backgroundColor: colors.surface }]}
                   onPress={() => handleSelect(item)}
                 >
-                  <Text style={styles.optionText}>{item}</Text>
+                  <Text style={[styles.optionText, { color: colors.text }]}>{item}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -135,7 +139,7 @@ const AddressDropdown: React.FC<AddressDropdownProps> = ({
         )}
       </View>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>}
     </View>
   );
 };
@@ -148,11 +152,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginBottom: 8,
   },
   required: {
-    color: COLORS.error,
+    // Color applied dynamically
   },
   dropdownContainer: {
     position: 'relative',
@@ -163,33 +166,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: COLORS.border,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 16, // Match the exact padding of other text inputs
-    backgroundColor: COLORS.surface, // Same as other text inputs
     minHeight: 52, // Match the height of other text inputs
   },
   inputError: {
-    borderColor: COLORS.error,
+    // Color applied dynamically
   },
   inputDisabled: {
-    backgroundColor: COLORS.surface,
-    borderColor: COLORS.border,
+    // Colors applied dynamically
   },
   inputText: {
     flex: 1,
     fontSize: 16,
-    color: COLORS.text.primary,
   },
   placeholder: {
-    color: COLORS.text.disabled, // Use the same color as other placeholders
+    // Color applied dynamically
   },
   textDisabled: {
-    color: COLORS.text.disabled,
+    // Color applied dynamically
   },
   errorText: {
-    color: COLORS.error,
     fontSize: 14,
     marginTop: 4,
   },

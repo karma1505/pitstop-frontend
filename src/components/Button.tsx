@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../utils/constants';
+import { SPACING, FONT_SIZES } from '../utils/constants';
+import { useTheme } from '../context/ThemeContext';
 
 interface ButtonProps {
   title: string;
@@ -21,6 +22,8 @@ export default function Button({
   style,
   textStyle,
 }: ButtonProps) {
+  const { colors } = useTheme();
+
   const buttonStyle = [
     styles.base,
     styles[variant],
@@ -40,12 +43,23 @@ export default function Button({
 
   return (
     <TouchableOpacity
-      style={buttonStyle}
+      style={[
+        buttonStyle,
+        variant === 'primary' && { backgroundColor: colors.primary, borderColor: colors.primary },
+        variant === 'secondary' && { backgroundColor: colors.secondary, borderColor: colors.secondary },
+        variant === 'outline' && { backgroundColor: 'transparent', borderColor: colors.primary },
+      ]}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.8}
     >
-      <Text style={buttonTextStyle}>{title}</Text>
+      <Text style={[
+        buttonTextStyle,
+        variant === 'primary' && { color: colors.onPrimary },
+        variant === 'secondary' && { color: colors.onSecondary },
+        variant === 'outline' && { color: colors.primary },
+        disabled && { color: colors.textTertiary },
+      ]}>{title}</Text>
     </TouchableOpacity>
   );
 }
@@ -58,16 +72,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   primary: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    // Colors applied dynamically
   },
   secondary: {
-    backgroundColor: COLORS.secondary,
-    borderColor: COLORS.secondary,
+    // Colors applied dynamically
   },
   outline: {
     backgroundColor: 'transparent',
-    borderColor: COLORS.primary,
+    // Colors applied dynamically
   },
   small: {
     paddingHorizontal: SPACING.sm,
@@ -92,13 +104,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   primaryText: {
-    color: COLORS.text.primary,
+    // Colors applied dynamically
   },
   secondaryText: {
-    color: COLORS.text.primary,
+    // Colors applied dynamically
   },
   outlineText: {
-    color: COLORS.primary,
+    // Colors applied dynamically
   },
   smallText: {
     fontSize: FONT_SIZES.sm,
@@ -110,6 +122,6 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.lg,
   },
   disabledText: {
-    color: COLORS.text.disabled,
+    // Colors applied dynamically
   },
 }); 

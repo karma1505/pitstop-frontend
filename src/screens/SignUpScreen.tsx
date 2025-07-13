@@ -13,7 +13,7 @@ import {
   Animated,
   Image,
 } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../utils';
+import { SPACING, FONT_SIZES } from '../utils';
 import { Button } from '../components';
 import { validateEmail, validatePassword, isValidEmail } from '../utils/validators';
 import AddressDropdown from '../components/AddressDropdown';
@@ -23,6 +23,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import loginLogo from '../assets/images/login-logo.webp';
 import { useAuth } from '../context';
+import { useTheme } from '../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
 
 interface SignUpData {
@@ -50,6 +51,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register, loading } = useAuth();
+  const { colors } = useTheme();
   const [formData, setFormData] = useState<SignUpData>({
     firstName: '',
     lastName: '',
@@ -284,7 +286,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
         <TextInput
           style={getPasswordInputStyle(error)}
           placeholder={`Enter your ${label.toLowerCase()}`}
-          placeholderTextColor={COLORS.text.disabled}
+          placeholderTextColor={colors.inputPlaceholder}
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={!showPassword}
@@ -298,7 +300,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           <Icon
             name={showPassword ? 'eye' : 'eye-off'}
             size={20}
-            color="#666"
+            color={colors.textTertiary}
           />
         </TouchableOpacity>
       </View>
@@ -322,7 +324,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       <TextInput
         style={[styles.textInput, errors[field] && styles.inputError]}
         placeholder={placeholder}
-        placeholderTextColor={COLORS.text.disabled}
+        placeholderTextColor={colors.inputPlaceholder}
         value={formData[field]}
         onChangeText={(value) => updateFormData(field, value)}
         keyboardType={keyboardType || 'default'}
@@ -348,7 +350,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
         <Icon
           name="arrow-back"
           size={24}
-          color="#666"
+          color={colors.textTertiary}
         />
       </TouchableOpacity>
       
@@ -369,7 +371,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
             <TextInput
               style={getInputStyle('firstName')}
               placeholder="Enter first name"
-              placeholderTextColor={COLORS.text.disabled}
+              placeholderTextColor={colors.inputPlaceholder}
               value={formData.firstName}
               onChangeText={(value) => updateFormData('firstName', value)}
               autoCapitalize="words"
@@ -382,7 +384,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
             <TextInput
               style={getInputStyle('lastName')}
               placeholder="Enter last name"
-              placeholderTextColor={COLORS.text.disabled}
+              placeholderTextColor={colors.inputPlaceholder}
               value={formData.lastName}
               onChangeText={(value) => updateFormData('lastName', value)}
               autoCapitalize="words"
@@ -481,7 +483,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
         <Icon
           name="chevron-forward"
           size={24}
-          color={isPage1Complete() ? '#fff' : '#ccc'}
+          color={isPage1Complete() ? colors.onPrimary : colors.textTertiary}
           style={{ marginLeft: 2 }} // Slight adjustment to center
         />
       </TouchableOpacity>
@@ -491,8 +493,8 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
   const renderPage2 = () => (
     <View style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.title}>Garage Details</Text>
-        <Text style={styles.subtitle}>Tell us about your garage</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Garage Details</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Tell us about your garage</Text>
       </View>
 
       <View style={styles.form}>
@@ -542,7 +544,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
             <TextInput
               style={[styles.textInput, errors.city && styles.inputError]}
               placeholder="City Name"
-              placeholderTextColor={COLORS.text.disabled}
+              placeholderTextColor={colors.inputPlaceholder}
               value={formData.city}
               onChangeText={(value) => {
                 // Only allow letters, spaces, and hyphens
@@ -562,7 +564,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
             <View style={styles.mobileInputContainer}>
               <TextInput
                 style={[styles.mobileTextInput, errors.mobileNumber && styles.inputError]}
-                placeholderTextColor={COLORS.text.disabled}
+                placeholderTextColor={colors.inputPlaceholder}
                 value={formData.mobileNumber}
                 onChangeText={(value) => {
                   // Restrict input based on first character
@@ -583,7 +585,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
               <Icon
                 name="chevron-down"
                 size={20}
-                color={COLORS.surface}
+                color={colors.surface}
                 style={styles.mobileChevron}
               />
             </View>
@@ -597,7 +599,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
             </Text>
             <TextInput
               style={[styles.textInput, errors.pincode && styles.inputError]}
-              placeholderTextColor={COLORS.text.disabled}
+              placeholderTextColor={colors.inputPlaceholder}
               value={formData.pincode}
               onChangeText={handlePincodeChange}
               keyboardType="numeric"
@@ -615,7 +617,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           <Icon
             name="chevron-back"
             size={24}
-            color="#666"
+            color={colors.textTertiary}
             style={{ marginRight: 2 }} // Slight adjustment to center
           />
         </TouchableOpacity>
@@ -633,17 +635,18 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
       >
         {/* Progress Bar - Moved lower */}
         <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
+          <View style={[styles.progressBar, { backgroundColor: colors.outline }]}>
             <Animated.View
               style={[
                 styles.progressFill,
+                { backgroundColor: colors.primary },
                 {
                   width: progressAnim.interpolate({
                     inputRange: [0, 1],
@@ -653,7 +656,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
               ]}
             />
           </View>
-          <Text style={styles.progressText}>{currentPage}/2</Text>
+          <Text style={[styles.progressText, { color: colors.textSecondary }]}>{currentPage}/2</Text>
         </View>
 
         <ScrollView
@@ -670,7 +673,6 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -685,18 +687,15 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 4,
-    backgroundColor: COLORS.border,
     borderRadius: 2,
     marginRight: SPACING.md,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
     borderRadius: 2,
   },
   progressText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.text.secondary,
     fontWeight: '600',
   },
   scrollContent: {
@@ -720,12 +719,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginBottom: SPACING.sm,
   },
   subtitle: {
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -758,17 +755,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: COLORS.border,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: COLORS.surface,
     minHeight: 52,
   },
   mobileTextInput: {
     flex: 1,
     fontSize: 16,
-    color: COLORS.text.primary,
     backgroundColor: 'transparent',
     borderWidth: 0,
     paddingHorizontal: 0,
@@ -780,36 +774,28 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginBottom: SPACING.sm,
   },
   requiredAsterisk: {
-    color: COLORS.error,
     fontWeight: 'bold',
   },
   textInput: {
-    backgroundColor: COLORS.surface,
     borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.primary,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   passwordContainer: {
     position: 'relative',
   },
   passwordInput: {
-    backgroundColor: COLORS.surface,
     borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
     paddingRight: 50, // Space for eye icon
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.primary,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   eyeIcon: {
     position: 'absolute',
@@ -824,11 +810,10 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
   },
   inputError: {
-    borderColor: COLORS.error,
+    borderWidth: 1,
   },
   errorText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.error,
     marginTop: SPACING.xs,
   },
   validationContainer: {
@@ -845,21 +830,13 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: SPACING.sm,
   },
-  validationDotDefault: {
-    backgroundColor: COLORS.text.disabled,
-  },
-  validationDotSuccess: {
-    backgroundColor: COLORS.success,
-  },
+  validationDotDefault: {},
+  validationDotSuccess: {},
   validationText: {
     fontSize: FONT_SIZES.sm,
   },
-  validationTextDefault: {
-    color: COLORS.text.disabled,
-  },
-  validationTextSuccess: {
-    color: COLORS.success,
-  },
+  validationTextDefault: {},
+  validationTextSuccess: {},
   nextButton: {
     width: 56,
     height: 56,
@@ -876,22 +853,14 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  nextButtonActive: {
-    backgroundColor: COLORS.primary,
-  },
-  nextButtonInactive: {
-    backgroundColor: COLORS.border,
-  },
+  nextButtonActive: {},
+  nextButtonInactive: {},
   nextButtonText: {
     fontSize: FONT_SIZES.xl,
     fontWeight: 'bold',
   },
-  nextButtonTextActive: {
-    color: COLORS.text.primary,
-  },
-  nextButtonTextInactive: {
-    color: COLORS.text.disabled,
-  },
+  nextButtonTextActive: {},
+  nextButtonTextInactive: {},
   page2Buttons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -899,27 +868,8 @@ const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     gap: SPACING.md,
   },
-  backButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.border,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  backButtonText: {
-    fontSize: FONT_SIZES.xl,
-    fontWeight: 'bold',
-    color: COLORS.text.secondary,
-  },
+  backButton: {},
+  backButtonText: {},
   signUpButtonContainer: {
     flex: 1,
     height: 56,

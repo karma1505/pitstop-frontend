@@ -1,20 +1,6 @@
 // App-wide constants
-
-export const COLORS = {
-  primary: '#007AFF',
-  secondary: '#5856D6',
-  success: '#34C759',
-  warning: '#FF9500',
-  error: '#FF3B30',
-  background: '#0f0f0f',
-  surface: '#1C1C1E',
-  text: {
-    primary: '#FFFFFF',
-    secondary: '#8E8E93',
-    disabled: '#636366',
-  },
-  border: '#3A3A3C',
-} as const;
+// Note: Colors are now managed through the theme system
+// Use useTheme() hook to access theme-aware colors
 
 export const SPACING = {
   xs: 4,

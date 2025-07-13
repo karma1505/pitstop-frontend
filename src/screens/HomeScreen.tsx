@@ -9,9 +9,11 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../utils';
+import { SPACING, FONT_SIZES } from '../utils';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../context';
+import { useTheme } from '../context/ThemeContext';
+import { ThemeToggle } from '../components';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -22,114 +24,132 @@ interface DataCardProps {
   onPress: () => void;
 }
 
-const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => (
-  <TouchableOpacity style={styles.card} onPress={onPress}>
-    <View style={styles.cardHeader}>
-      <Icon name={icon} size={24} color={COLORS.primary} />
-      <Text style={styles.cardTitle}>{title}</Text>
-    </View>
-    
-    <View style={styles.cardContent}>
-      {data.map((item, index) => (
-        <View key={index} style={styles.dataRow}>
-          <Text style={styles.dataLabel}>{item.label}</Text>
-          <Text style={[styles.dataValue, item.color && { color: item.color }]}>
-            {item.value}
-          </Text>
-        </View>
-      ))}
-    </View>
-    
-    <TouchableOpacity style={styles.moreInfoButton} onPress={onPress}>
-      <Text style={styles.moreInfoText}>More Info.</Text>
-      <Icon name="chevron-forward" size={16} color={COLORS.primary} />
+const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => {
+  const { colors } = useTheme();
+    return (
+    <TouchableOpacity style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.outline }]} onPress={onPress}>
+      <View style={styles.cardHeader}>
+        <Icon name={icon} size={24} color={colors.primary} />
+        <Text style={[styles.cardTitle, { color: colors.text }]}>{title}</Text>
+      </View>
+      
+      <View style={styles.cardContent}>
+        {data.map((item, index) => (
+          <View key={index} style={styles.dataRow}>
+            <Text style={[styles.dataLabel, { color: colors.textSecondary }]}>{item.label}</Text>
+            <Text style={[styles.dataValue, { color: colors.text }, item.color && { color: item.color }]}>
+              {item.value}
+            </Text>
+          </View>
+        ))}
+      </View>
+      
+      <TouchableOpacity style={styles.moreInfoButton} onPress={onPress}>
+        <Text style={[styles.moreInfoText, { color: colors.primary }]}>More Info.</Text>
+        <Icon name="chevron-forward" size={16} color={colors.primary} />
+      </TouchableOpacity>
     </TouchableOpacity>
-  </TouchableOpacity>
-);
+  );
+};
 
 interface BottomTabProps {
   activeTab: string;
   onTabPress: (tab: string) => void;
 }
 
-const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => (
-  <View style={styles.bottomTab}>
-    <TouchableOpacity 
-      style={styles.tabItem} 
-      onPress={() => onTabPress('home')}
-    >
-      <Icon 
-        name="home" 
-        size={24} 
-        color={activeTab === 'home' ? COLORS.primary : COLORS.text.secondary} 
-      />
-      <Text style={[
-        styles.tabText, 
-        activeTab === 'home' && styles.activeTabText
-      ]}>
-        Home
-      </Text>
-    </TouchableOpacity>
+const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.bottomTab, { backgroundColor: colors.surface, borderTopColor: colors.outline }]}>
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => onTabPress('home')}
+      >
+        <Icon 
+          name="home" 
+          size={24} 
+          color={activeTab === 'home' ? colors.primary : colors.textSecondary} 
+        />
+        <Text style={[
+          styles.tabText, 
+          { color: activeTab === 'home' ? colors.primary : colors.textSecondary },
+          activeTab === 'home' && styles.activeTabText
+        ]}>
+          Home
+        </Text>
+      </TouchableOpacity>
 
-    <TouchableOpacity 
-      style={styles.tabItem} 
-      onPress={() => onTabPress('myGarage')}
-    >
-      <Icon 
-        name="construct" 
-        size={24} 
-        color={activeTab === 'myGarage' ? COLORS.primary : COLORS.text.secondary} 
-      />
-      <Text style={[
-        styles.tabText, 
-        activeTab === 'myGarage' && styles.activeTabText
-      ]}>
-        My Garage
-      </Text>
-    </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => onTabPress('myGarage')}
+      >
+        <Icon 
+          name="construct" 
+          size={24} 
+          color={activeTab === 'myGarage' ? colors.primary : colors.textSecondary} 
+        />
+        <Text style={[
+          styles.tabText, 
+          { color: activeTab === 'myGarage' ? colors.primary : colors.textSecondary },
+          activeTab === 'myGarage' && styles.activeTabText
+        ]}>
+          My Garage
+        </Text>
+      </TouchableOpacity>
 
-    <TouchableOpacity 
-      style={styles.tabItem} 
-      onPress={() => onTabPress('myMarketplace')}
-    >
-      <Icon 
-        name="cart" 
-        size={24} 
-        color={activeTab === 'myMarketplace' ? COLORS.primary : COLORS.text.secondary} 
-      />
-      <Text style={[
-        styles.tabText, 
-        activeTab === 'myMarketplace' && styles.activeTabText
-      ]}>
-        Marketplace
-      </Text>
-    </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => onTabPress('myMarketplace')}
+      >
+        <Icon 
+          name="cart" 
+          size={24} 
+          color={activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary} 
+        />
+        <Text style={[
+          styles.tabText, 
+          { color: activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary },
+          activeTab === 'myMarketplace' && styles.activeTabText
+        ]}>
+          Marketplace
+        </Text>
+      </TouchableOpacity>
 
-    <TouchableOpacity 
-      style={styles.tabItem} 
-      onPress={() => onTabPress('settings')}
-    >
-      <Icon 
-        name="settings" 
-        size={24} 
-        color={activeTab === 'settings' ? COLORS.primary : COLORS.text.secondary} 
-      />
-      <Text style={[
-        styles.tabText, 
-        activeTab === 'settings' && styles.activeTabText
-      ]}>
-        Settings
-      </Text>
-    </TouchableOpacity>
-  </View>
-);
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => onTabPress('settings')}
+      >
+        <Icon 
+          name="settings" 
+          size={24} 
+          color={activeTab === 'settings' ? colors.primary : colors.textSecondary} 
+        />
+        <Text style={[
+          styles.tabText, 
+          { color: activeTab === 'settings' ? colors.primary : colors.textSecondary },
+          activeTab === 'settings' && styles.activeTabText
+        ]}>
+          Settings
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
-export default function HomeScreen() {
+interface HomeScreenProps {
+  onNavigateToSettings?: () => void;
+}
+
+export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
   const [activeTab, setActiveTab] = useState('home');
   const { user, logout } = useAuth();
+  const { colors } = useTheme();
 
   const handleTabPress = (tab: string) => {
     setActiveTab(tab);
+    if (tab === 'settings' && onNavigateToSettings) {
+      onNavigateToSettings();
+    }
     // TODO: Navigate to respective screens
     console.log(`Navigating to ${tab}`);
   };
@@ -139,44 +159,21 @@ export default function HomeScreen() {
     // TODO: Navigate to expanded view and switch to myGarage
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-          },
-        },
-      ]
-    );
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View>
-            <Text style={styles.headerTitle}>Dashboard</Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Dashboard</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
               Welcome back, {user?.firstName || 'Garage Owner'}!
             </Text>
           </View>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Icon name="log-out-outline" size={24} color={COLORS.error} />
-          </TouchableOpacity>
         </View>
         
         {user && (
-          <View style={styles.userInfo}>
-            <Text style={styles.userInfoText}>
+          <View style={[styles.userInfo, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
+            <Text style={[styles.userInfoText, { color: colors.textSecondary }]}>
               {user.garageName} • {user.city}, {user.state}
             </Text>
           </View>
@@ -192,9 +189,9 @@ export default function HomeScreen() {
           title="Money Data"
           icon="cash"
           data={[
-            { label: 'Amount To Be Collected', value: '₹45,250', color: COLORS.primary },
-            { label: 'Received Today', value: '₹12,800', color: COLORS.success },
-            { label: 'Spent Today', value: '₹8,450', color: COLORS.error },
+            { label: 'Amount To Be Collected', value: '₹45,250', color: colors.primary },
+            { label: 'Received Today', value: '₹12,800', color: colors.success },
+            { label: 'Spent Today', value: '₹8,450', color: colors.error },
           ]}
           onPress={() => handleCardPress('money')}
         />
@@ -217,7 +214,7 @@ export default function HomeScreen() {
           data={[
             { label: 'Stock Received Today', value: '25 items' },
             { label: 'Stock Purchased Today', value: '₹3,200' },
-            { label: 'Low Stock', value: '3 items', color: COLORS.warning },
+            { label: 'Low Stock', value: '3 items', color: colors.warning },
             { label: 'Orders Placed Today', value: '2' },
           ]}
           onPress={() => handleCardPress('inventory')}
@@ -238,7 +235,7 @@ export default function HomeScreen() {
           title="Revenue Analytics"
           icon="trending-up"
           data={[
-            { label: 'This Week', value: '₹89,450', color: COLORS.success },
+            { label: 'This Week', value: '₹89,450', color: colors.success },
             { label: 'Last Week', value: '₹76,200' },
             { label: 'Monthly Target', value: '₹3,50,000' },
             { label: 'Achieved', value: '85%' },
@@ -257,6 +254,9 @@ export default function HomeScreen() {
           ]}
           onPress={() => handleCardPress('customer')}
         />
+
+        {/* Theme Toggle for Testing */}
+        <ThemeToggle />
       </ScrollView>
 
       <BottomTab activeTab={activeTab} onTabPress={handleTabPress} />
@@ -267,7 +267,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   header: {
     paddingHorizontal: SPACING.lg,
@@ -283,26 +282,18 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginBottom: SPACING.xs,
   },
   headerSubtitle: {
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.secondary,
-  },
-  logoutButton: {
-    padding: SPACING.sm,
   },
   userInfo: {
-    backgroundColor: COLORS.surface,
     borderRadius: 12,
     padding: SPACING.md,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   userInfoText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.text.secondary,
     textAlign: 'center',
   },
   scrollView: {
@@ -313,12 +304,10 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.xl,
   },
   card: {
-    backgroundColor: COLORS.surface,
     borderRadius: 16,
     padding: SPACING.lg,
     marginBottom: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.border,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -336,7 +325,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: FONT_SIZES.lg,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginLeft: SPACING.sm,
   },
   cardContent: {
@@ -350,13 +338,11 @@ const styles = StyleSheet.create({
   },
   dataLabel: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.text.secondary,
     flex: 1,
   },
   dataValue: {
     fontSize: FONT_SIZES.sm,
     fontWeight: '600',
-    color: COLORS.text.primary,
     textAlign: 'right',
   },
   moreInfoButton: {
@@ -367,15 +353,12 @@ const styles = StyleSheet.create({
   },
   moreInfoText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.primary,
     fontWeight: '500',
     marginRight: SPACING.xs,
   },
   bottomTab: {
     flexDirection: 'row',
-    backgroundColor: COLORS.surface,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
     paddingBottom: SPACING.lg,
     paddingTop: SPACING.sm,
   },
@@ -387,13 +370,10 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.text.secondary,
     marginTop: SPACING.xs,
     textAlign: 'center',
   },
   activeTabText: {
-    color: COLORS.primary,
     fontWeight: '600',
   },
-
 }); 
