@@ -23,6 +23,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import loginLogo from '../assets/images/login-logo.webp';
 import { useAuth } from '../context';
+import * as Haptics from 'expo-haptics';
 
 interface SignUpData {
   firstName: string;
@@ -159,6 +160,8 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
+      // Trigger haptic feedback for password mismatch
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
 
     setErrors(newErrors);
@@ -202,6 +205,8 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
     if (validatePage1()) {
       setCurrentPage(2);
     } else {
+      // Trigger haptic feedback for validation errors
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       // Show a summary of validation errors
       const errorMessages = Object.values(errors).filter(Boolean);
       if (errorMessages.length > 0) {
@@ -218,27 +223,31 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
     setCurrentPage(1);
   };
 
-  const handleSignUp = async () => {
+    const handleSignUp = async () => {
     if (!validatePage2()) return;
 
     try {
-      const success = await register(formData);
+      const result = await register(formData);
       
-      if (success) {
+      if (result.success) {
         Alert.alert('Success', 'Registration successful!', [
           {
             text: 'OK',
             onPress: () => {
-              if (onNavigateToHome) {
-                onNavigateToHome();
-              }
+      if (onNavigateToHome) {
+        onNavigateToHome();
+      }
             }
           }
         ]);
       } else {
-        Alert.alert('Error', 'Registration failed. Please try again.');
+        // Trigger haptic feedback for registration failure
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert('Error', result.error || 'Registration failed. Please try again.');
       }
     } catch (error) {
+      // Trigger haptic feedback for network error
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'Registration failed. Please check your connection and try again.');
     }
   };
@@ -452,6 +461,11 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           () => setShowConfirmPassword(!showConfirmPassword),
           errors.confirmPassword,
           true
+        )}
+        
+        {/* Password mismatch warning */}
+        {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+          <Text style={styles.errorText}>Passwords do not match</Text>
         )}
       </View>
 
