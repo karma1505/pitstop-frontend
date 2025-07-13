@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions, Image } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../utils';
+import { SPACING, FONT_SIZES } from '../utils';
+import { useTheme } from '../context/ThemeContext';
 import splashLogo from '../assets/images/splash-logo.webp';
 
 interface SplashScreenProps {
@@ -8,6 +9,7 @@ interface SplashScreenProps {
 }
 
 export default function SplashScreen({ onFinish }: SplashScreenProps) {
+  const { colors } = useTheme();
   const fadeAnim = new Animated.Value(0);
   const scaleAnim = new Animated.Value(0.8);
 
@@ -36,7 +38,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
   }, [fadeAnim, scaleAnim, onFinish]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Animated.View
         style={[
           styles.content,
@@ -49,7 +51,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
         <View style={styles.logoContainer}>
           <Image source={splashLogo} style={styles.logoImage} resizeMode="contain" />
         </View>
-        <Text style={styles.tagline}>Your trusted garage finder</Text>
+        <Text style={[styles.tagline, { color: colors.textSecondary }]}>Your trusted garage finder</Text>
       </Animated.View>
       
       {/* Background gradient effect */}
@@ -63,7 +65,6 @@ const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -82,7 +83,6 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: FONT_SIZES.lg,
-    color: COLORS.text.secondary,
     textAlign: 'center',
     marginTop: SPACING.sm,
     fontWeight: '300',

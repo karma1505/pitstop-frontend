@@ -12,9 +12,10 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../utils';
+import { SPACING, FONT_SIZES } from '../utils';
 import { Button } from '../components';
 import { useAuth } from '../context';
+import { useTheme } from '../context/ThemeContext';
 import loginLogo from '../assets/images/login-logo.webp';
 import * as Haptics from 'expo-haptics';
 
@@ -28,6 +29,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const { login, loading } = useAuth();
+  const { colors } = useTheme();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -78,7 +80,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
@@ -92,8 +94,8 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
           {/* Header */}
           <View style={styles.header}>
             <Image source={loginLogo} style={styles.logoImage} resizeMode="contain" />
-            <Text style={styles.welcomeText}>Welcome Back</Text>
-            <Text style={styles.subtitleText}>
+            <Text style={[styles.welcomeText, { color: colors.text }]}>Welcome Back</Text>
+            <Text style={[styles.subtitleText, { color: colors.textSecondary }]}>
               Don't forget to sign in
             </Text>
           </View>
@@ -101,11 +103,11 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
           {/* Login Form */}
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Email</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Email</Text>
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }]}
                 placeholder="Enter your email"
-                placeholderTextColor={COLORS.text.disabled}
+                placeholderTextColor={colors.inputPlaceholder}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -116,11 +118,11 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Password</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Password</Text>
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }]}
                 placeholder="Enter your password"
-                placeholderTextColor={COLORS.text.disabled}
+                placeholderTextColor={colors.inputPlaceholder}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -128,7 +130,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
                 autoCorrect={false}
                 editable={!loading}
               />
-              {loginError && <Text style={styles.errorText}>{loginError}</Text>}
+              {loginError && <Text style={[styles.errorText, { color: colors.error }]}>{loginError}</Text>}
             </View>
 
             {/* Forgot Password Link */}
@@ -137,7 +139,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
               onPress={handleForgotPassword}
               disabled={loading}
             >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={[styles.forgotPasswordText, { color: colors.primary }]}>Forgot Password?</Text>
             </TouchableOpacity>
 
             {/* Login Button */}
@@ -150,9 +152,9 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
 
             {/* Sign Up Link */}
             <View style={styles.signUpContainer}>
-              <Text style={styles.signUpText}>
+              <Text style={[styles.signUpText, { color: colors.textSecondary }]}>
                 New to iGarage?{' '}
-                <Text style={styles.signUpLink} onPress={handleSignUp}>
+                <Text style={[styles.signUpLink, { color: colors.primary }]} onPress={handleSignUp}>
                   Sign up
                 </Text>
               </Text>
@@ -167,7 +169,6 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -190,12 +191,10 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginBottom: SPACING.sm,
   },
   subtitleText: {
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -208,22 +207,17 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
-    color: COLORS.text.primary,
     marginBottom: SPACING.sm,
   },
   textInput: {
-    backgroundColor: COLORS.surface,
     borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.primary,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   errorText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.error,
     marginTop: SPACING.xs,
   },
   forgotPasswordContainer: {
@@ -232,7 +226,6 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.primary,
     fontWeight: '500',
   },
   loginButton: {
@@ -254,11 +247,9 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     fontSize: FONT_SIZES.md,
-    color: COLORS.text.secondary,
     textAlign: 'center',
   },
   signUpLink: {
-    color: COLORS.primary,
     fontWeight: '600',
   },
 }); 

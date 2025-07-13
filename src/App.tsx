@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { HomeScreen, SplashScreen, LoginScreen, SignUpScreen } from './screens';
+import { HomeScreen, SplashScreen, LoginScreen, SignUpScreen, SettingsScreen } from './screens';
 import { AuthProvider, useAuth } from './context';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings'>('login');
   const { isAuthenticated, loading } = useAuth();
+  const { isDark } = useTheme();
 
   const handleSplashFinish = () => {
     setShowSplash(false);
@@ -24,12 +26,20 @@ function AppContent() {
     setCurrentScreen('home');
   };
 
+  const handleNavigateToSettings = () => {
+    setCurrentScreen('settings');
+  };
+
+  const handleNavigateBackToHome = () => {
+    setCurrentScreen('home');
+  };
+
   // Show splash screen initially
   if (showSplash) {
     return (
       <>
         <SplashScreen onFinish={handleSplashFinish} />
-        <StatusBar style="light" />
+        <StatusBar style={isDark ? "light" : "dark"} />
       </>
     );
   }
@@ -39,17 +49,25 @@ function AppContent() {
     return (
       <>
         <SplashScreen onFinish={() => {}} />
-        <StatusBar style="light" />
+        <StatusBar style={isDark ? "light" : "dark"} />
       </>
     );
   }
 
-  // If authenticated, show home screen
+  // If authenticated, show home screen or settings
   if (isAuthenticated) {
+    if (currentScreen === 'settings') {
+      return (
+        <>
+          <SettingsScreen onNavigateBack={handleNavigateBackToHome} />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </>
+      );
+    }
     return (
       <>
-        <HomeScreen />
-        <StatusBar style="light" />
+        <HomeScreen onNavigateToSettings={handleNavigateToSettings} />
+        <StatusBar style={isDark ? "light" : "dark"} />
       </>
     );
   }
@@ -59,7 +77,7 @@ function AppContent() {
     return (
       <>
         <SignUpScreen onNavigateToLogin={handleNavigateToLogin} onNavigateToHome={handleNavigateToHome} />
-        <StatusBar style="light" />
+        <StatusBar style={isDark ? "light" : "dark"} />
       </>
     );
   }
@@ -67,15 +85,17 @@ function AppContent() {
   return (
     <>
       <LoginScreen onNavigateToSignUp={handleNavigateToSignUp} onNavigateToHome={handleNavigateToHome} />
-      <StatusBar style="light" />
+      <StatusBar style={isDark ? "light" : "dark"} />
     </>
   );
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 } 
