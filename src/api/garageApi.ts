@@ -1,6 +1,6 @@
 // API service for garage-related endpoints
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.240.63.177:8080/api/v1';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.29.104:8080/api/v1';
 
 export interface LoginRequest {
   email: string;
@@ -56,12 +56,21 @@ export class GarageApi {
 
     const response = await fetch(url, config);
     
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `API Error: ${response.status} ${response.statusText}`);
+    // Parse the response first
+    const responseData = await response.json();
+    
+    // For authentication endpoints, return the response even if it's not successful
+    // so the calling code can handle success/failure based on the response data
+    if (endpoint.includes('/admin/login') || endpoint.includes('/admin/register')) {
+      return responseData;
     }
     
-    return response.json();
+    // For other endpoints, throw error if not successful
+    if (!response.ok) {
+      throw new Error(responseData.message || `API Error: ${response.status} ${response.statusText}`);
+    }
+    
+    return responseData;
   }
 
   // Authentication methods
