@@ -16,6 +16,7 @@ import { COLORS, SPACING, FONT_SIZES } from '../utils';
 import { Button } from '../components';
 import { useAuth } from '../context';
 import loginLogo from '../assets/images/login-logo.webp';
+import * as Haptics from 'expo-haptics';
 
 interface LoginScreenProps {
   onNavigateToSignUp?: () => void;
@@ -25,6 +26,7 @@ interface LoginScreenProps {
 export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   const { login, loading } = useAuth();
 
   const handleLogin = async () => {
@@ -33,10 +35,13 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
       return;
     }
 
+    // Clear previous error
+    setLoginError('');
+
     try {
-      const success = await login(email.trim(), password);
+      const result = await login(email.trim(), password);
       
-      if (success) {
+      if (result.success) {
         Alert.alert('Success', 'Login successful!', [
           {
             text: 'OK',
@@ -48,10 +53,14 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
           }
         ]);
       } else {
-        Alert.alert('Error', 'Invalid email or password. Please try again.');
+        // Trigger haptic feedback for login failure
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        setLoginError(result.error || 'Invalid email or password. Please try again.');
       }
     } catch (error) {
-      Alert.alert('Error', 'Login failed. Please check your connection and try again.');
+      // Trigger haptic feedback for network error
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setLoginError('Login failed. Please check your connection and try again.');
     }
   };
 
@@ -119,6 +128,7 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
                 autoCorrect={false}
                 editable={!loading}
               />
+              {loginError && <Text style={styles.errorText}>{loginError}</Text>}
             </View>
 
             {/* Forgot Password Link */}
@@ -210,6 +220,11 @@ const styles = StyleSheet.create({
     color: COLORS.text.primary,
     borderWidth: 1,
     borderColor: COLORS.border,
+  },
+  errorText: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.error,
+    marginTop: SPACING.xs,
   },
   forgotPasswordContainer: {
     alignItems: 'flex-end',

@@ -6,8 +6,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: AuthResponse['userInfo'] | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (userData: any) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (userData: any) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   loading: boolean;
 }
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
       const response = await GarageApi.login({ email, password });
@@ -66,19 +66,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
-        return true;
+        return { success: true };
       } else {
-        return false;
+        return { success: false, error: response.message };
       }
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      return { success: false, error: 'Network error. Please check your connection.' };
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (userData: any): Promise<boolean> => {
+  const register = async (userData: any): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
       const response = await GarageApi.register(userData);
@@ -90,13 +90,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
-        return true;
+        return { success: true };
       } else {
-        return false;
+        return { success: false, error: response.message };
       }
     } catch (error) {
       console.error('Register error:', error);
-      return false;
+      return { success: false, error: 'Network error. Please check your connection.' };
     } finally {
       setLoading(false);
     }
