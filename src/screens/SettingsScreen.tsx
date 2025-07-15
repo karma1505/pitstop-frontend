@@ -21,7 +21,7 @@ export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) 
   const { colors, theme, setTheme } = useTheme();
   const { logout } = useAuth();
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+  const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme);
   };
 
@@ -45,7 +45,7 @@ export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) 
     );
   };
 
-  const renderThemeOption = (optionTheme: 'light' | 'dark' | 'system', label: string) => {
+  const renderThemeOption = (optionTheme: 'light' | 'dark', label: string) => {
     const isSelected = theme === optionTheme;
     return (
       <TouchableOpacity
@@ -114,7 +114,6 @@ export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) 
           <View style={styles.themeContainer}>
             {renderThemeOption('light', 'Light')}
             {renderThemeOption('dark', 'Dark')}
-            {renderThemeOption('system', 'System Default')}
           </View>
         </View>
 
