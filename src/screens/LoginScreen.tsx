@@ -22,11 +22,19 @@ import * as Haptics from 'expo-haptics';
 interface LoginScreenProps {
   onNavigateToSignUp?: () => void;
   onNavigateToHome?: () => void;
+  onNavigateToForgotPassword?: () => void;
+  onNavigateToOTPLogin?: () => void;
 }
 
-export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: LoginScreenProps) {
+export default function LoginScreen({ 
+  onNavigateToSignUp, 
+  onNavigateToHome, 
+  onNavigateToForgotPassword,
+  onNavigateToOTPLogin 
+}: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const { login, loading } = useAuth();
   const { colors } = useTheme();
@@ -75,8 +83,19 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
   };
 
   const handleForgotPassword = () => {
-    // TODO: Navigate to forgot password screen
-    Alert.alert('Forgot Password', 'Forgot password functionality will be implemented later');
+    if (onNavigateToForgotPassword) {
+      onNavigateToForgotPassword();
+    } else {
+      Alert.alert('Forgot Password', 'Forgot password functionality will be implemented later');
+    }
+  };
+
+  const handleOTPLogin = () => {
+    if (onNavigateToOTPLogin) {
+      onNavigateToOTPLogin();
+    } else {
+      Alert.alert('OTP Login', 'OTP login functionality will be implemented later');
+    }
   };
 
   return (
@@ -88,8 +107,8 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-          bounces={false}
-          scrollEnabled={false}
+          bounces={true}
+          scrollEnabled={true}
         >
           {/* Header */}
           <View style={styles.header}>
@@ -119,17 +138,28 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
 
             <View style={styles.inputContainer}>
               <Text style={[styles.inputLabel, { color: colors.text }]}>Password</Text>
-              <TextInput
-                style={[styles.textInput, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }]}
-                placeholder="Enter your password"
-                placeholderTextColor={colors.inputPlaceholder}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!loading}
-              />
+              <View style={[styles.passwordContainer, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder }]}>
+                <TextInput
+                  style={[styles.passwordInput, { color: colors.inputText }]}
+                  placeholder="Enter your password"
+                  placeholderTextColor={colors.inputPlaceholder}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!loading}
+                />
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  <Text style={[styles.eyeButtonText, { color: colors.textSecondary }]}>
+                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               {loginError && <Text style={[styles.errorText, { color: colors.error }]}>{loginError}</Text>}
             </View>
 
@@ -150,15 +180,41 @@ export default function LoginScreen({ onNavigateToSignUp, onNavigateToHome }: Lo
               style={styles.loginButton}
             />
 
-            {/* Sign Up Link */}
-            <View style={styles.signUpContainer}>
-              <Text style={[styles.signUpText, { color: colors.textSecondary }]}>
-                New to iGarage?{' '}
-                <Text style={[styles.signUpLink, { color: colors.primary }]} onPress={handleSignUp}>
-                  Sign up
-                </Text>
-              </Text>
+            {/* Divider */}
+            <View style={styles.dividerContainer}>
+              <View style={[styles.dividerLine, { backgroundColor: colors.outline }]} />
+              <Text style={[styles.dividerText, { color: colors.textSecondary }]}>OR</Text>
+              <View style={[styles.dividerLine, { backgroundColor: colors.outline }]} />
             </View>
+
+            {/* OTP Login Button */}
+            <TouchableOpacity
+              style={[styles.otpLoginButton, { backgroundColor: colors.surface, borderColor: colors.outline }]}
+              onPress={handleOTPLogin}
+              disabled={loading}
+            >
+              <Text style={[styles.otpLoginText, { color: colors.text }]}>
+                Login with OTP
+              </Text>
+            </TouchableOpacity>
+
+            {/* Sign Up Button */}
+            <TouchableOpacity
+              style={[
+                styles.signUpButton, 
+                { 
+                  backgroundColor: colors.primary,
+                  borderWidth: 2,
+                  borderColor: colors.primary 
+                }
+              ]}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              <Text style={[styles.signUpButtonText, { color: colors.onPrimary }]}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -174,14 +230,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xxl + 40,
+    paddingTop: SPACING.xxl + 20, // Reduced from +40 to move content higher
     paddingBottom: SPACING.xl,
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.xxl,
+    marginBottom: SPACING.xl, // Reduced from xxl to move form higher
   },
   logoImage: {
     width: 120,
@@ -199,7 +255,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   form: {
-    marginBottom: SPACING.xxl,
+    marginBottom: SPACING.xxl, // Increased to ensure Sign Up button is visible
   },
   inputContainer: {
     marginBottom: SPACING.lg,
@@ -215,6 +271,25 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     fontSize: FONT_SIZES.md,
     borderWidth: 1,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: FONT_SIZES.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
+  },
+  eyeButton: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
+  },
+  eyeButtonText: {
+    fontSize: FONT_SIZES.md,
   },
   errorText: {
     fontSize: FONT_SIZES.sm,
@@ -241,15 +316,70 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: SPACING.lg,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    marginHorizontal: SPACING.md,
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+  },
+  otpLoginButton: {
+    marginTop: SPACING.md,
+    marginBottom: SPACING.md, // Reduced from lg to accommodate sign up button
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  otpLoginText: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
   signUpContainer: {
     alignItems: 'center',
-    marginTop: SPACING.lg,
+    marginTop: SPACING.md, // Reduced from lg since OTP button now has bottom margin
   },
   signUpText: {
     fontSize: FONT_SIZES.md,
     textAlign: 'center',
   },
   signUpLink: {
+    fontWeight: '600',
+  },
+  signUpButton: {
+    marginTop: SPACING.md,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  signUpButtonText: {
+    fontSize: FONT_SIZES.md,
     fontWeight: '600',
   },
 }); 
