@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Appearance, Animated } from 'react-native';
+import { Appearance, Animated, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export type ThemeType = 'light' | 'dark' | 'system';
+export type ThemeType = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: ThemeType;
@@ -166,53 +166,41 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = '@iGarage_theme';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<ThemeType>('system');
+  const [theme, setThemeState] = useState<ThemeType>('light');
   const [isDark, setIsDark] = useState(false);
   const [fadeAnim] = useState(new Animated.Value(1));
 
-  // Get the actual colors based on current theme and system preference
+  // Initialize theme detection
+  useEffect(() => {
+    const initializeTheme = async () => {
+      try {
+        // Load saved theme preference
+        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme && ['light', 'dark'].includes(savedTheme)) {
+          setThemeState(savedTheme as ThemeType);
+          setIsDark(savedTheme === 'dark');
+        } else {
+          // Default to light theme
+          setThemeState('light');
+          setIsDark(false);
+        }
+      } catch (error) {
+        console.error('Error initializing theme:', error);
+        setThemeState('light');
+        setIsDark(false);
+      }
+    };
+
+    initializeTheme();
+  }, []);
+
+  // Get the actual colors based on current theme
   const getColors = (): ThemeColors => {
-    const systemIsDark = Appearance.getColorScheme() === 'dark';
-    const effectiveTheme = theme === 'system' ? (systemIsDark ? 'dark' : 'light') : theme;
-    return effectiveTheme === 'dark' ? darkColors : lightColors;
+    return isDark ? darkColors : lightColors;
   };
 
   // Ensure colors are always available, fallback to light theme if needed
   const colors = getColors() || lightColors;
-
-  // Load saved theme preference
-  useEffect(() => {
-    const loadTheme = async () => {
-      try {
-        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-        if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-          setThemeState(savedTheme as ThemeType);
-        }
-      } catch (error) {
-        console.error('Error loading theme preference:', error);
-      }
-    };
-
-    loadTheme();
-  }, []);
-
-  // Update isDark when theme or system appearance changes
-  useEffect(() => {
-    const updateIsDark = () => {
-      const systemIsDark = Appearance.getColorScheme() === 'dark';
-      const effectiveTheme = theme === 'system' ? (systemIsDark ? 'dark' : 'light') : theme;
-      setIsDark(effectiveTheme === 'dark');
-    };
-
-    updateIsDark();
-
-    // Listen for system appearance changes
-    const subscription = Appearance.addChangeListener(() => {
-      updateIsDark();
-    });
-
-    return () => subscription?.remove();
-  }, [theme]);
 
   const setTheme = async (newTheme: ThemeType) => {
     try {
@@ -232,10 +220,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
       setThemeState(newTheme);
+      setIsDark(newTheme === 'dark');
     } catch (error) {
       console.error('Error saving theme preference:', error);
     }
   };
+
+  // Add device info logging
+  useEffect(() => {
+    console.log(`Device info: ${JSON.stringify({
+      platform: Platform.OS,
+      version: Platform.Version,
+      isTesting: __DEV__,
+      currentTheme: theme,
+      isDark
+    }, null, 2)}`);
+  }, [theme, isDark]);
 
   const value: ThemeContextType = {
     theme,
@@ -259,7 +259,7 @@ export const useTheme = (): ThemeContextType => {
     // Return default values instead of throwing error
     console.warn('useTheme must be used within a ThemeProvider, returning default values');
     return {
-      theme: 'system',
+      theme: 'light',
       isDark: false,
       colors: lightColors,
       setTheme: () => {},
