@@ -15,14 +15,23 @@ import { useAuth } from '../context';
 
 interface SettingsScreenProps {
   onNavigateBack?: () => void;
+  onNavigateToChangePassword?: () => void;
 }
 
-export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) {
+export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassword }: SettingsScreenProps) {
   const { colors, theme, setTheme } = useTheme();
   const { logout } = useAuth();
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+  const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme);
+  };
+
+  const handleChangePassword = () => {
+    if (onNavigateToChangePassword) {
+      onNavigateToChangePassword();
+    } else {
+      Alert.alert('Change Password', 'Change password functionality will be implemented later');
+    }
   };
 
   const handleLogout = () => {
@@ -45,7 +54,7 @@ export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) 
     );
   };
 
-  const renderThemeOption = (optionTheme: 'light' | 'dark' | 'system', label: string) => {
+  const renderThemeOption = (optionTheme: 'light' | 'dark', label: string) => {
     const isSelected = theme === optionTheme;
     return (
       <TouchableOpacity
@@ -114,7 +123,6 @@ export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) 
           <View style={styles.themeContainer}>
             {renderThemeOption('light', 'Light')}
             {renderThemeOption('dark', 'Dark')}
-            {renderThemeOption('system', 'System Default')}
           </View>
         </View>
 
@@ -130,7 +138,7 @@ export default function SettingsScreen({ onNavigateBack }: SettingsScreenProps) 
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Password', 'Change password will be implemented later')}
+            onPress={handleChangePassword}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Change Password</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>

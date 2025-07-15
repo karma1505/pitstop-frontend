@@ -278,13 +278,13 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
     required?: boolean
   ) => (
     <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>
+      <Text style={[styles.inputLabel, { color: colors.text }]}>
         {label}
-        {required && <Text style={styles.requiredAsterisk}> *</Text>}
+        {required && <Text style={[styles.requiredAsterisk, { color: colors.error }]}> *</Text>}
       </Text>
-      <View style={styles.passwordContainer}>
+      <View style={[styles.passwordContainer, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder }]}>
         <TextInput
-          style={getPasswordInputStyle(error)}
+          style={[getPasswordInputStyle(error), { color: colors.inputText }]}
           placeholder={`Enter your ${label.toLowerCase()}`}
           placeholderTextColor={colors.inputPlaceholder}
           value={value}
@@ -304,7 +304,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           />
         </TouchableOpacity>
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>}
     </View>
   );
 
@@ -317,12 +317,16 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
     autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
   ) => (
     <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>
+      <Text style={[styles.inputLabel, { color: colors.text }]}>
         {label}
-        {required && <Text style={styles.requiredAsterisk}> *</Text>}
+        {required && <Text style={[styles.requiredAsterisk, { color: colors.error }]}> *</Text>}
       </Text>
       <TextInput
-        style={[styles.textInput, errors[field] && styles.inputError]}
+        style={[
+          styles.textInput, 
+          errors[field] && styles.inputError,
+          { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }
+        ]}
         placeholder={placeholder}
         placeholderTextColor={colors.inputPlaceholder}
         value={formData[field]}
@@ -331,7 +335,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
         autoCapitalize={autoCapitalize || 'sentences'}
         autoCorrect={false}
       />
-      {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
+      {errors[field] && <Text style={[styles.errorText, { color: colors.error }]}>{errors[field]}</Text>}
     </View>
   );
 
@@ -356,40 +360,40 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       
       <View style={styles.header}>
         <Image source={loginLogo} style={styles.logoImage} resizeMode="contain" />
-        <Text style={styles.title}>Welcome To iGarage</Text>
-        <Text style={styles.subtitle}>JStart managing your garage</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Welcome To iGarage</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Start managing your garage</Text>
       </View>
 
       <View style={styles.form}>
         {/* Name Fields */}
         <View style={styles.row}>
           <View style={[styles.inputContainer, styles.halfWidth]}>
-            <Text style={styles.inputLabel}>
+            <Text style={[styles.inputLabel, { color: colors.text }]}>
               First Name
-              <Text style={styles.requiredAsterisk}> *</Text>
+              <Text style={[styles.requiredAsterisk, { color: colors.error }]}> *</Text>
             </Text>
             <TextInput
-              style={getInputStyle('firstName')}
+              style={[getInputStyle('firstName'), { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }]}
               placeholder="Enter first name"
               placeholderTextColor={colors.inputPlaceholder}
               value={formData.firstName}
               onChangeText={(value) => updateFormData('firstName', value)}
               autoCapitalize="words"
             />
-            {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
+            {errors.firstName && <Text style={[styles.errorText, { color: colors.error }]}>{errors.firstName}</Text>}
           </View>
 
           <View style={[styles.inputContainer, styles.halfWidth]}>
-            <Text style={styles.inputLabel}>Last Name</Text>
+            <Text style={[styles.inputLabel, { color: colors.text }]}>Last Name</Text>
             <TextInput
-              style={getInputStyle('lastName')}
+              style={[getInputStyle('lastName'), { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }]}
               placeholder="Enter last name"
               placeholderTextColor={colors.inputPlaceholder}
               value={formData.lastName}
               onChangeText={(value) => updateFormData('lastName', value)}
               autoCapitalize="words"
             />
-            {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
+            {errors.lastName && <Text style={[styles.errorText, { color: colors.error }]}>{errors.lastName}</Text>}
           </View>
         </View>
 
@@ -419,11 +423,11 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           <View style={styles.validationItem}>
             <View style={[
               styles.validationDot,
-              passwordValidation.hasMinLength ? styles.validationDotSuccess : styles.validationDotDefault
+              { backgroundColor: passwordValidation.hasMinLength ? colors.success : colors.textTertiary }
             ]} />
             <Text style={[
               styles.validationText,
-              passwordValidation.hasMinLength ? styles.validationTextSuccess : styles.validationTextDefault
+              { color: passwordValidation.hasMinLength ? colors.success : colors.textSecondary }
             ]}>
               Minimum 8 characters
             </Text>
@@ -431,11 +435,11 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           <View style={styles.validationItem}>
             <View style={[
               styles.validationDot,
-              passwordValidation.hasSpecialChar ? styles.validationDotSuccess : styles.validationDotDefault
+              { backgroundColor: passwordValidation.hasSpecialChar ? colors.success : colors.textTertiary }
             ]} />
             <Text style={[
               styles.validationText,
-              passwordValidation.hasSpecialChar ? styles.validationTextSuccess : styles.validationTextDefault
+              { color: passwordValidation.hasSpecialChar ? colors.success : colors.textSecondary }
             ]}>
               Must contain a special character
             </Text>
@@ -443,11 +447,11 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           <View style={styles.validationItem}>
             <View style={[
               styles.validationDot,
-              passwordValidation.hasNumeric ? styles.validationDotSuccess : styles.validationDotDefault
+              { backgroundColor: passwordValidation.hasNumeric ? colors.success : colors.textTertiary }
             ]} />
             <Text style={[
               styles.validationText,
-              passwordValidation.hasNumeric ? styles.validationTextSuccess : styles.validationTextDefault
+              { color: passwordValidation.hasNumeric ? colors.success : colors.textSecondary }
             ]}>
               Must contain a number
             </Text>
@@ -467,7 +471,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
         
         {/* Password mismatch warning */}
         {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-          <Text style={styles.errorText}>Passwords do not match</Text>
+          <Text style={[styles.errorText, { color: colors.error }]}>Passwords do not match</Text>
         )}
       </View>
 
@@ -475,7 +479,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       <TouchableOpacity
         style={[
           styles.nextButton,
-          isPage1Complete() ? styles.nextButtonActive : styles.nextButtonInactive
+          isPage1Complete() ? { backgroundColor: colors.primary } : { backgroundColor: colors.outline }
         ]}
         onPress={handleNextPage}
         disabled={!isPage1Complete()}
@@ -537,12 +541,16 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           </View>
 
           <View style={[styles.inputContainer, styles.oneThirdWidth]}>
-            <Text style={styles.inputLabel}>
+            <Text style={[styles.inputLabel, { color: colors.text }]}>
               City
-              <Text style={styles.requiredAsterisk}> *</Text>
+              <Text style={[styles.requiredAsterisk, { color: colors.error }]}> *</Text>
             </Text>
             <TextInput
-              style={[styles.textInput, errors.city && styles.inputError]}
+              style={[
+                styles.textInput, 
+                errors.city && styles.inputError,
+                { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }
+              ]}
               placeholder="City Name"
               placeholderTextColor={colors.inputPlaceholder}
               value={formData.city}
@@ -553,17 +561,21 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
               }}
               autoCapitalize="words"
             />
-            {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+            {errors.city && <Text style={[styles.errorText, { color: colors.error }]}>{errors.city}</Text>}
           </View>
         </View>
 
         {/* Mobile Number and Pincode */}
         <View style={styles.row}>
           <View style={[styles.inputContainer, styles.twoThirdsWidth]}>
-            <Text style={styles.inputLabel}>Mobile Number</Text>
-            <View style={styles.mobileInputContainer}>
+            <Text style={[styles.inputLabel, { color: colors.text }]}>Mobile Number</Text>
+            <View style={[styles.mobileInputContainer, { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder }]}>
               <TextInput
-                style={[styles.mobileTextInput, errors.mobileNumber && styles.inputError]}
+                style={[
+                  styles.mobileTextInput, 
+                  errors.mobileNumber && styles.inputError,
+                  { color: colors.inputText }
+                ]}
                 placeholderTextColor={colors.inputPlaceholder}
                 value={formData.mobileNumber}
                 onChangeText={(value) => {
@@ -585,33 +597,52 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
               <Icon
                 name="chevron-down"
                 size={20}
-                color={colors.surface}
+                color={colors.textSecondary}
                 style={styles.mobileChevron}
               />
             </View>
-            {errors.mobileNumber && <Text style={styles.errorText}>{errors.mobileNumber}</Text>}
+            {errors.mobileNumber && <Text style={[styles.errorText, { color: colors.error }]}>{errors.mobileNumber}</Text>}
           </View>
 
           <View style={[styles.inputContainer, styles.oneThirdWidth]}>
-            <Text style={styles.inputLabel}>
+            <Text style={[styles.inputLabel, { color: colors.text }]}>
               Pincode
-              <Text style={styles.requiredAsterisk}> *</Text>
+              <Text style={[styles.requiredAsterisk, { color: colors.error }]}> *</Text>
             </Text>
             <TextInput
-              style={[styles.textInput, errors.pincode && styles.inputError]}
+              style={[
+                styles.textInput, 
+                errors.pincode && styles.inputError,
+                { backgroundColor: colors.inputBackground, borderColor: colors.inputBorder, color: colors.inputText }
+              ]}
               placeholderTextColor={colors.inputPlaceholder}
               value={formData.pincode}
               onChangeText={handlePincodeChange}
               keyboardType="numeric"
               maxLength={6}
             />
-            {errors.pincode && <Text style={styles.errorText}>{errors.pincode}</Text>}
+            {errors.pincode && <Text style={[styles.errorText, { color: colors.error }]}>{errors.pincode}</Text>}
           </View>
         </View>
       </View>
       <View style={styles.page2Buttons}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={{ 
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.outline,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
           onPress={handleBackPage}
         >
           <Icon
@@ -788,6 +819,8 @@ const styles = StyleSheet.create({
   },
   passwordContainer: {
     position: 'relative',
+    borderRadius: 12,
+    borderWidth: 1,
   },
   passwordInput: {
     borderRadius: 12,
@@ -830,13 +863,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: SPACING.sm,
   },
-  validationDotDefault: {},
-  validationDotSuccess: {},
   validationText: {
     fontSize: FONT_SIZES.sm,
   },
-  validationTextDefault: {},
-  validationTextSuccess: {},
   nextButton: {
     width: 56,
     height: 56,
@@ -868,8 +897,6 @@ const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     gap: SPACING.md,
   },
-  backButton: {},
-  backButtonText: {},
   signUpButtonContainer: {
     flex: 1,
     height: 56,

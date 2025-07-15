@@ -1,12 +1,26 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { HomeScreen, SplashScreen, LoginScreen, SignUpScreen, SettingsScreen } from './screens';
+import { 
+  HomeScreen, 
+  SplashScreen, 
+  LoginScreen, 
+  SignUpScreen, 
+  SettingsScreen,
+  ForgotPasswordScreen,
+  OTPVerificationScreen,
+  ResetPasswordScreen,
+  OTPLoginScreen,
+  ChangePasswordScreen
+} from './screens';
 import { AuthProvider, useAuth } from './context';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword'>('login');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
   const { isAuthenticated, loading } = useAuth();
   const { isDark } = useTheme();
 
@@ -30,8 +44,42 @@ function AppContent() {
     setCurrentScreen('settings');
   };
 
+  const handleNavigateToForgotPassword = () => {
+    setCurrentScreen('forgotPassword');
+  };
+
+  const handleNavigateToOTPLogin = () => {
+    setCurrentScreen('otpLogin');
+  };
+
+  const handleNavigateToOTPVerification = (phone: string, type: 'FORGOT_PASSWORD' | 'LOGIN_OTP' = 'FORGOT_PASSWORD') => {
+    setPhoneNumber(phone);
+    setOtpType(type);
+    setCurrentScreen('otpVerification');
+  };
+
+  const handleNavigateToResetPassword = (phone: string, otp: string) => {
+    setPhoneNumber(phone);
+    setOtpCode(otp);
+    setCurrentScreen('resetPassword');
+  };
+
+  const handleNavigateToChangePassword = () => {
+    setCurrentScreen('changePassword');
+  };
+
   const handleNavigateBackToHome = () => {
     setCurrentScreen('home');
+  };
+
+  const handleNavigateBackToLogin = () => {
+    setCurrentScreen('login');
+    setPhoneNumber('');
+    setOtpCode('');
+  };
+
+  const handleNavigateBackToSettings = () => {
+    setCurrentScreen('settings');
   };
 
   // Show splash screen initially
@@ -59,11 +107,21 @@ function AppContent() {
     if (currentScreen === 'settings') {
       return (
         <>
-          <SettingsScreen onNavigateBack={handleNavigateBackToHome} />
+          <SettingsScreen onNavigateBack={handleNavigateBackToHome} onNavigateToChangePassword={handleNavigateToChangePassword} />
           <StatusBar style={isDark ? "light" : "dark"} />
         </>
       );
     }
+    
+    if (currentScreen === 'changePassword') {
+      return (
+        <>
+          <ChangePasswordScreen onNavigateBack={handleNavigateBackToSettings} />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </>
+      );
+    }
+    
     return (
       <>
         <HomeScreen onNavigateToSettings={handleNavigateToSettings} />
@@ -72,7 +130,7 @@ function AppContent() {
     );
   }
 
-  // If not authenticated, show login/signup screens
+  // If not authenticated, show login/signup/OTP screens
   if (currentScreen === 'signup') {
     return (
       <>
@@ -82,9 +140,61 @@ function AppContent() {
     );
   }
 
+  if (currentScreen === 'forgotPassword') {
+    return (
+      <>
+        <ForgotPasswordScreen onNavigateBack={handleNavigateBackToLogin} onNavigateToOTP={handleNavigateToOTPVerification} />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
+    );
+  }
+
+  if (currentScreen === 'otpVerification') {
+    return (
+      <>
+        <OTPVerificationScreen 
+          phoneNumber={phoneNumber}
+          type={otpType}
+          onNavigateBack={handleNavigateBackToLogin} 
+          onNavigateToReset={handleNavigateToResetPassword}
+          onNavigateToHome={handleNavigateToHome}
+        />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
+    );
+  }
+
+  if (currentScreen === 'resetPassword') {
+    return (
+      <>
+        <ResetPasswordScreen 
+          phoneNumber={phoneNumber}
+          otpCode={otpCode}
+          onNavigateBack={handleNavigateBackToLogin} 
+          onNavigateToLogin={handleNavigateBackToLogin} 
+        />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
+    );
+  }
+
+  if (currentScreen === 'otpLogin') {
+    return (
+      <>
+        <OTPLoginScreen onNavigateBack={handleNavigateBackToLogin} onNavigateToOTP={handleNavigateToOTPVerification} />
+        <StatusBar style={isDark ? "light" : "dark"} />
+      </>
+    );
+  }
+
   return (
     <>
-      <LoginScreen onNavigateToSignUp={handleNavigateToSignUp} onNavigateToHome={handleNavigateToHome} />
+      <LoginScreen 
+        onNavigateToSignUp={handleNavigateToSignUp} 
+        onNavigateToHome={handleNavigateToHome}
+        onNavigateToForgotPassword={handleNavigateToForgotPassword}
+        onNavigateToOTPLogin={handleNavigateToOTPLogin}
+      />
       <StatusBar style={isDark ? "light" : "dark"} />
     </>
   );
