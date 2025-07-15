@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GarageApi, AuthResponse } from '../api/garageApi';
+import { GarageApi, AuthResponse, ForgotPasswordRequest, OTPVerificationRequest, ResetPasswordRequest } from '../api/garageApi';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -10,6 +10,14 @@ interface AuthContextType {
   register: (userData: any) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   loading: boolean;
+  // OTP methods
+  forgotPassword: (phoneNumber: string) => Promise<{ success: boolean; error?: string }>;
+  verifyOTP: (phoneNumber: string, otpCode: string, type: string) => Promise<{ success: boolean; error?: string }>;
+  resetPassword: (phoneNumber: string, otpCode: string, newPassword: string, confirmPassword: string) => Promise<{ success: boolean; error?: string }>;
+  sendLoginOTP: (phoneNumber: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithOTP: (phoneNumber: string, otpCode: string) => Promise<{ success: boolean; error?: string }>;
+  // Change password method
+  changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -115,6 +123,122 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // OTP methods
+  const forgotPassword = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.forgotPassword({ phoneNumber });
+      
+      if (response.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOTP = async (phoneNumber: string, otpCode: string, type: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.verifyOTP({ phoneNumber, otpCode, type });
+      
+      if (response.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('OTP verification error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (phoneNumber: string, otpCode: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.resetPassword({ phoneNumber, otpCode, newPassword, confirmPassword });
+      
+      if (response.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendLoginOTP = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.sendLoginOTP({ phoneNumber });
+      
+      if (response.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Send login OTP error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithOTP = async (phoneNumber: string, otpCode: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.loginWithOTP({ phoneNumber, otpCode, type: 'LOGIN_OTP' });
+      
+      if (response.success) {
+        await AsyncStorage.setItem('auth_token', response.token);
+        await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
+        
+        setToken(response.token);
+        setUser(response.userInfo);
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Login with OTP error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Change password method
+  const changePassword = async (currentPassword: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.changePassword({ currentPassword, newPassword, confirmPassword });
+      
+      if (response.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Change password error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value: AuthContextType = {
     isAuthenticated,
     user,
@@ -123,6 +247,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     loading,
+    forgotPassword,
+    verifyOTP,
+    resetPassword,
+    sendLoginOTP,
+    loginWithOTP,
+    changePassword,
   };
 
   return (
