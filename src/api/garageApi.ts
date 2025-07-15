@@ -1,6 +1,6 @@
 // API service for garage-related endpoints
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.29.104:8080/api/v1';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.31.235:8080/api/v1';
 
 export interface LoginRequest {
   email: string;

@@ -13,7 +13,6 @@ import { SPACING, FONT_SIZES } from '../utils';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../context';
 import { useTheme } from '../context/ThemeContext';
-import { ThemeToggle } from '../components';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -255,8 +254,6 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
           onPress={() => handleCardPress('customer')}
         />
 
-        {/* Theme Toggle for Testing */}
-        <ThemeToggle />
       </ScrollView>
 
       <BottomTab activeTab={activeTab} onTabPress={handleTabPress} />
