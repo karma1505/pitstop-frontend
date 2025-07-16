@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,8 @@ import { SPACING, FONT_SIZES } from '../utils';
 import { Button } from '../components';
 import { useAuth } from '../context';
 import { useTheme } from '../context/ThemeContext';
-import loginLogo from '../assets/images/login-logo.webp';
+import loginLogo from '../assets/images/login-logo.png';
+import Icon from 'react-native-vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 
 interface LoginScreenProps {
@@ -52,16 +53,10 @@ export default function LoginScreen({
       const result = await login(email.trim(), password);
       
       if (result.success) {
-        Alert.alert('Success', 'Login successful!', [
-          {
-            text: 'OK',
-            onPress: () => {
-              if (onNavigateToHome) {
-                onNavigateToHome();
-              }
-            }
-          }
-        ]);
+        // Navigate immediately on successful login
+        if (onNavigateToHome) {
+          onNavigateToHome();
+        }
       } else {
         // Trigger haptic feedback for login failure
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -151,15 +146,18 @@ export default function LoginScreen({
                   editable={!loading}
                 />
                 <TouchableOpacity
-                  style={styles.eyeButton}
+                  style={styles.eyeIcon}
                   onPress={() => setShowPassword(!showPassword)}
                   disabled={loading}
                 >
-                  <Text style={[styles.eyeButtonText, { color: colors.textSecondary }]}>
-                    {showPassword ? '👁️' : '👁️‍🗨️'}
-                  </Text>
+                  <Icon
+                    name={showPassword ? 'eye' : 'eye-off'}
+                    size={20}
+                    color={colors.textTertiary}
+                  />
                 </TouchableOpacity>
               </View>
+              
               {loginError && <Text style={[styles.errorText, { color: colors.error }]}>{loginError}</Text>}
             </View>
 
@@ -283,13 +281,16 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
+    paddingRight: 50, // Space for eye icon
   },
-  eyeButton: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.md,
-  },
-  eyeButtonText: {
-    fontSize: FONT_SIZES.md,
+  eyeIcon: {
+    position: 'absolute',
+    right: SPACING.md,
+    top: '50%',
+    transform: [{ translateY: -12 }], // Adjusted for better centering
+    padding: SPACING.xs,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     fontSize: FONT_SIZES.sm,

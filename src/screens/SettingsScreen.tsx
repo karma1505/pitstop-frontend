@@ -12,6 +12,7 @@ import {
 import { SPACING, FONT_SIZES } from '../utils';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context';
+import { BackButton } from '../components';
 
 interface SettingsScreenProps {
   onNavigateBack?: () => void;
@@ -103,12 +104,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
         <View style={styles.header}>
           <View style={styles.headerTop}>
             {onNavigateBack && (
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={onNavigateBack}
-              >
-                <Text style={[styles.backButtonText, { color: colors.primary }]}>← Back</Text>
-              </TouchableOpacity>
+              <BackButton onPress={onNavigateBack} size="small" style={styles.headerBackButton} />
             )}
             <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
             <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
@@ -233,13 +229,12 @@ const styles = StyleSheet.create({
   headerTop: {
     marginBottom: SPACING.md,
   },
-  backButton: {
-    marginBottom: SPACING.md,
-    marginTop: SPACING.md,
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  backButtonText: {
-    fontSize: FONT_SIZES.md,
-    fontWeight: '600',
+  smallBackButton: {
+    marginRight: SPACING.sm,
   },
   headerTitle: {
     fontSize: FONT_SIZES.xxxl,
@@ -248,6 +243,10 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: FONT_SIZES.md,
+  },
+  headerBackButton: {
+    marginTop: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   section: {
     marginBottom: SPACING.xxl,
