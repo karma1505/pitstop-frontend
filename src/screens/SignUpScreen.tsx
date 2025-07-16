@@ -21,7 +21,7 @@ import {
   getStates
 } from '../utils/indianAddressData';
 import Icon from 'react-native-vector-icons/Ionicons';
-import loginLogo from '../assets/images/login-logo.webp';
+import loginLogo from '../assets/images/login-logo.png';
 import { useAuth } from '../context';
 import { useTheme } from '../context/ThemeContext';
 import * as Haptics from 'expo-haptics';

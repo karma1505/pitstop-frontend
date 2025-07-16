@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
 import { SPACING, FONT_SIZES } from '../utils';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { BackButton } from '../components';
 
 interface ChangePasswordScreenProps {
   onNavigateBack?: () => void;
@@ -29,6 +31,29 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
   const { colors } = useTheme();
   const { changePassword } = useAuth();
 
+  // Password validation state
+  const [passwordValidation, setPasswordValidation] = useState({
+    hasMinLength: false,
+    hasSpecialChar: false,
+    hasNumeric: false,
+    matchesConfirm: false,
+  });
+
+  // Password validation effect
+  useEffect(() => {
+    const hasMinLength = newPassword.length >= 8;
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+    const hasNumeric = /\d/.test(newPassword);
+    const matchesConfirm = newPassword === confirmPassword && confirmPassword.length > 0;
+    
+    setPasswordValidation({
+      hasMinLength,
+      hasSpecialChar,
+      hasNumeric,
+      matchesConfirm,
+    });
+  }, [newPassword, confirmPassword]);
+
   const handleChangePassword = async () => {
     if (!currentPassword.trim()) {
       Alert.alert('Error', 'Please enter your current password');
@@ -37,11 +62,6 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
 
     if (!newPassword.trim()) {
       Alert.alert('Error', 'Please enter a new password');
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      Alert.alert('Error', 'Password must be at least 8 characters long');
       return;
     }
 
@@ -86,13 +106,6 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={onNavigateBack}
-          >
-            <Text style={[styles.backButtonText, { color: colors.primary }]}>← Back</Text>
-          </TouchableOpacity>
-          
           <Text style={[styles.title, { color: colors.text }]}>Change Password</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             Update your password to keep your account secure
@@ -123,9 +136,11 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
                 style={styles.eyeButton}
                 onPress={() => setShowCurrentPassword(!showCurrentPassword)}
               >
-                <Text style={[styles.eyeButtonText, { color: colors.textSecondary }]}>
-                  {showCurrentPassword ? '👁️' : '👁️‍🗨️'}
-                </Text>
+                <Icon
+                  name={showCurrentPassword ? 'eye' : 'eye-off'}
+                  size={24}
+                  color={colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -153,11 +168,55 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
                 style={styles.eyeButton}
                 onPress={() => setShowNewPassword(!showNewPassword)}
               >
-                <Text style={[styles.eyeButtonText, { color: colors.textSecondary }]}>
-                  {showNewPassword ? '👁️' : '👁️‍🗨️'}
-                </Text>
+                <Icon
+                  name={showNewPassword ? 'eye' : 'eye-off'}
+                  size={24}
+                  color={colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
+            
+            {/* Password Validation */}
+            {newPassword.length > 0 && (
+              <View style={styles.validationContainer}>
+                <View style={styles.validationItem}>
+                  <View style={[
+                    styles.validationDot,
+                    { backgroundColor: passwordValidation.hasMinLength ? colors.success : colors.textTertiary }
+                  ]} />
+                  <Text style={[
+                    styles.validationText,
+                    { color: passwordValidation.hasMinLength ? colors.success : colors.textSecondary }
+                  ]}>
+                    Minimum 8 characters
+                  </Text>
+                </View>
+                <View style={styles.validationItem}>
+                  <View style={[
+                    styles.validationDot,
+                    { backgroundColor: passwordValidation.hasSpecialChar ? colors.success : colors.textTertiary }
+                  ]} />
+                  <Text style={[
+                    styles.validationText,
+                    { color: passwordValidation.hasSpecialChar ? colors.success : colors.textSecondary }
+                  ]}>
+                    Must contain a special character
+                  </Text>
+                </View>
+                <View style={styles.validationItem}>
+                  <View style={[
+                    styles.validationDot,
+                    { backgroundColor: passwordValidation.hasNumeric ? colors.success : colors.textTertiary }
+                  ]} />
+                  <Text style={[
+                    styles.validationText,
+                    { color: passwordValidation.hasNumeric ? colors.success : colors.textSecondary }
+                  ]}>
+                    Must contain a number
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
 
           <View style={styles.inputContainer}>
@@ -183,11 +242,31 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
                 style={styles.eyeButton}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text style={[styles.eyeButtonText, { color: colors.textSecondary }]}>
-                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
-                </Text>
+                <Icon
+                  name={showConfirmPassword ? 'eye' : 'eye-off'}
+                  size={24}
+                  color={colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
+            
+            {/* Confirm Password Validation */}
+            {confirmPassword.length > 0 && (
+              <View style={styles.validationContainer}>
+                <View style={styles.validationItem}>
+                  <View style={[
+                    styles.validationDot,
+                    { backgroundColor: passwordValidation.matchesConfirm ? colors.success : colors.textTertiary }
+                  ]} />
+                  <Text style={[
+                    styles.validationText,
+                    { color: passwordValidation.matchesConfirm ? colors.success : colors.textSecondary }
+                  ]}>
+                    Passwords match
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
 
           <TouchableOpacity
@@ -204,14 +283,13 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
               {isLoading ? 'Changing...' : 'Change Password'}
             </Text>
           </TouchableOpacity>
-
-          <View style={styles.helpText}>
-            <Text style={[styles.helpTextContent, { color: colors.textSecondary }]}>
-              Password must be at least 8 characters long
-            </Text>
-          </View>
         </View>
       </KeyboardAvoidingView>
+      
+      {/* Back Button positioned at bottom left */}
+      <View style={styles.backButtonContainer}>
+        <BackButton onPress={onNavigateBack || (() => {})} size="medium" />
+      </View>
     </SafeAreaView>
   );
 }
@@ -225,15 +303,8 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xl,
+    paddingTop: SPACING.xxl + SPACING.lg, // Added more top margin
     paddingBottom: SPACING.xxl,
-  },
-  backButton: {
-    marginBottom: SPACING.lg,
-  },
-  backButtonText: {
-    fontSize: FONT_SIZES.md,
-    fontWeight: '600',
   },
   title: {
     fontSize: FONT_SIZES.xxxl,
@@ -268,13 +339,17 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
+    paddingRight: 50, // Space for eye icon
+    borderRadius: 12,
   },
   eyeButton: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.md,
-  },
-  eyeButtonText: {
-    fontSize: FONT_SIZES.md,
+    position: 'absolute',
+    right: SPACING.md,
+    top: '50%',
+    transform: [{ translateY: -12 }], // Adjusted for better centering
+    padding: SPACING.xs,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   changeButton: {
     paddingVertical: SPACING.md,
@@ -294,5 +369,28 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.sm,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  validationContainer: {
+    marginTop: SPACING.sm,
+  },
+  validationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.xs,
+  },
+  validationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: SPACING.sm,
+  },
+  validationText: {
+    fontSize: FONT_SIZES.sm,
+    flex: 1,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    bottom: SPACING.lg,
+    left: SPACING.lg,
   },
 }); 
