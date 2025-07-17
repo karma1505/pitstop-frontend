@@ -232,16 +232,10 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       const result = await register(formData);
       
       if (result.success) {
-        Alert.alert('Success', 'Registration successful!', [
-          {
-            text: 'OK',
-            onPress: () => {
-      if (onNavigateToHome) {
-        onNavigateToHome();
-      }
-            }
-          }
-        ]);
+        // Navigate directly to home screen without showing alert
+        if (onNavigateToHome) {
+          onNavigateToHome();
+        }
       } else {
         // Trigger haptic feedback for registration failure
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

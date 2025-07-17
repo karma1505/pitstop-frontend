@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GarageApi, AuthResponse, ForgotPasswordRequest, OTPVerificationRequest, ResetPasswordRequest } from '../api/garageApi';
+import { GarageApi, AuthResponse, ForgotPasswordRequest, OTPVerificationRequest, ResetPasswordRequest, UpdateProfileRequest } from '../api/garageApi';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -18,6 +18,8 @@ interface AuthContextType {
   loginWithOTP: (phoneNumber: string, otpCode: string) => Promise<{ success: boolean; error?: string }>;
   // Change password method
   changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => Promise<{ success: boolean; error?: string }>;
+  // Update profile method
+  updateProfile: (profileData: UpdateProfileRequest) => Promise<{ success: boolean; error?: string; userInfo?: AuthResponse['userInfo'] }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -239,6 +241,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Update profile method
+  const updateProfile = async (profileData: UpdateProfileRequest): Promise<{ success: boolean; error?: string; userInfo?: AuthResponse['userInfo'] }> => {
+    try {
+      setLoading(true);
+      const response = await GarageApi.updateProfile(profileData);
+      
+      if (response.success) {
+        // Update stored user info
+        await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
+        setUser(response.userInfo);
+        
+        return { success: true, userInfo: response.userInfo };
+      } else {
+        return { success: false, error: response.message };
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return { success: false, error: 'Network error. Please check your connection.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value: AuthContextType = {
     isAuthenticated,
     user,
@@ -253,6 +278,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     sendLoginOTP,
     loginWithOTP,
     changePassword,
+    updateProfile,
   };
 
   return (
