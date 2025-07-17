@@ -46,6 +46,19 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
 }
 
+export interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  state: string;
+  city: string;
+  pincode: string;
+  mobileNumber: string;
+  garageName: string;
+  addressLine1: string;
+  addressLine2: string;
+}
+
 export interface OTPResponse {
   success: boolean;
   message: string;
@@ -66,6 +79,8 @@ export interface AuthResponse {
     city: string;
     addressLine1: string;
     addressLine2: string;
+    mobileNumber: string;
+    pincode: string;
     createdAt: string;
   };
   message: string;
@@ -185,6 +200,13 @@ export class GarageApi {
   static async changePassword(request: ChangePasswordRequest): Promise<OTPResponse> {
     return this.request<OTPResponse>('/admin/change-password', {
       method: 'POST',
+      body: JSON.stringify(request),
+    }, true); // Pass true for requireAuth
+  }
+
+  static async updateProfile(request: UpdateProfileRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/admin/update-profile', {
+      method: 'PATCH',
       body: JSON.stringify(request),
     }, true); // Pass true for requireAuth
   }

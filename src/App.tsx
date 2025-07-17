@@ -10,14 +10,15 @@ import {
   OTPVerificationScreen,
   ResetPasswordScreen,
   OTPLoginScreen,
-  ChangePasswordScreen
+  ChangePasswordScreen,
+  EditProfileSettings
 } from './screens';
 import { AuthProvider, useAuth } from './context';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile'>('login');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
@@ -68,6 +69,10 @@ function AppContent() {
     setCurrentScreen('changePassword');
   };
 
+  const handleNavigateToEditProfile = () => {
+    setCurrentScreen('editProfile');
+  };
+
   const handleNavigateBackToHome = () => {
     setCurrentScreen('home');
   };
@@ -107,7 +112,11 @@ function AppContent() {
     if (currentScreen === 'settings') {
       return (
         <>
-          <SettingsScreen onNavigateBack={handleNavigateBackToHome} onNavigateToChangePassword={handleNavigateToChangePassword} />
+          <SettingsScreen 
+            onNavigateBack={handleNavigateBackToHome} 
+            onNavigateToChangePassword={handleNavigateToChangePassword}
+            onNavigateToEditProfile={handleNavigateToEditProfile}
+          />
           <StatusBar style={isDark ? "light" : "dark"} />
         </>
       );
@@ -117,6 +126,15 @@ function AppContent() {
       return (
         <>
           <ChangePasswordScreen onNavigateBack={handleNavigateBackToSettings} />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </>
+      );
+    }
+
+    if (currentScreen === 'editProfile') {
+      return (
+        <>
+          <EditProfileSettings onNavigateBack={handleNavigateBackToSettings} />
           <StatusBar style={isDark ? "light" : "dark"} />
         </>
       );

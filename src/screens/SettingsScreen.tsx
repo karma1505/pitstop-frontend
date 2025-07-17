@@ -18,13 +18,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 interface SettingsScreenProps {
   onNavigateBack?: () => void;
   onNavigateToChangePassword?: () => void;
+  onNavigateToEditProfile?: () => void;
 }
 
-export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassword }: SettingsScreenProps) {
+export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassword, onNavigateToEditProfile }: SettingsScreenProps) {
   const { colors, theme, setTheme } = useTheme();
   const { logout } = useAuth();
-
-
 
   const handleThemeToggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -36,6 +35,14 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
       onNavigateToChangePassword();
     } else {
       Alert.alert('Change Password', 'Change password functionality will be implemented later');
+    }
+  };
+
+  const handleEditProfile = () => {
+    if (onNavigateToEditProfile) {
+      onNavigateToEditProfile();
+    } else {
+      Alert.alert('Edit Profile Settings', 'Edit profile settings will be implemented later');
     }
   };
 
@@ -58,8 +65,6 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
       ]
     );
   };
-
-
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -114,7 +119,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Profile Settings</Text>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Edit Profile Settings', 'Edit profile settings will be implemented later')}
+            onPress={handleEditProfile}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Edit Profile Settings</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
