@@ -3,11 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.31.235:8080/api/v1';
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
@@ -19,6 +14,13 @@ export interface RegisterRequest {
   pincode: string;
   mobileNumber: string;
   garageName: string;
+  addressLine1: string;
+  addressLine2: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -55,13 +57,15 @@ export interface AuthResponse {
   tokenType: string;
   expiresIn: number;
   userInfo: {
-    id: number;
+    id: string; // Changed from number to string for UUID
     firstName: string;
     lastName: string;
     email: string;
     garageName: string;
     state: string;
     city: string;
+    addressLine1: string;
+    addressLine2: string;
     createdAt: string;
   };
   message: string;
