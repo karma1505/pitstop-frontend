@@ -13,6 +13,7 @@ import { SPACING, FONT_SIZES } from '../utils';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context';
 import { BackButton } from '../components';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 interface SettingsScreenProps {
   onNavigateBack?: () => void;
@@ -23,7 +24,10 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
   const { colors, theme, setTheme } = useTheme();
   const { logout } = useAuth();
 
-  const handleThemeChange = (newTheme: 'light' | 'dark') => {
+
+
+  const handleThemeToggle = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
   };
 
@@ -55,43 +59,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
     );
   };
 
-  const renderThemeOption = (optionTheme: 'light' | 'dark', label: string) => {
-    const isSelected = theme === optionTheme;
-    return (
-      <TouchableOpacity
-        style={[
-          styles.themeOption,
-          {
-            backgroundColor: isSelected ? colors.primaryContainer : colors.surface,
-            borderColor: isSelected ? colors.primary : colors.outline,
-          },
-        ]}
-        onPress={() => handleThemeChange(optionTheme)}
-      >
-        <View style={styles.themeOptionContent}>
-          <Text
-            style={[
-              styles.themeOptionText,
-              {
-                color: isSelected ? colors.onPrimaryContainer : colors.text,
-                fontWeight: isSelected ? '600' : '400',
-              },
-            ]}
-          >
-            {label}
-          </Text>
-          {isSelected && (
-            <View
-              style={[
-                styles.selectedIndicator,
-                { backgroundColor: colors.primary },
-              ]}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  };
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -116,10 +84,29 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
         {/* Theme Section */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
-          <View style={styles.themeContainer}>
-            {renderThemeOption('light', 'Light')}
-            {renderThemeOption('dark', 'Dark')}
-          </View>
+          <TouchableOpacity
+            style={[styles.themeToggleContainer, { backgroundColor: colors.surface, borderColor: colors.outline }]}
+            onPress={handleThemeToggle}
+          >
+            <View style={styles.themeToggleContent}>
+              <View style={styles.themeToggleLeft}>
+                <Icon 
+                  name={theme === 'light' ? 'sunny' : 'moon'} 
+                  size={24} 
+                  color={theme === 'light' ? colors.primary : colors.primary} 
+                />
+                <Text style={[styles.themeToggleText, { color: colors.text }]}>
+                  {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+                </Text>
+              </View>
+              <Switch
+                value={theme === 'dark'}
+                onValueChange={handleThemeToggle}
+                trackColor={{ false: colors.outline, true: colors.primary }}
+                thumbColor={colors.onPrimary}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* User Profile Section */}
@@ -256,27 +243,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: SPACING.md,
   },
-  themeContainer: {
-    gap: SPACING.sm,
-  },
-  themeOption: {
+  themeToggleContainer: {
     borderRadius: 12,
     borderWidth: 1,
     padding: SPACING.md,
   },
-  themeOptionContent: {
+  themeToggleContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  themeOptionText: {
+  themeToggleLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  themeToggleText: {
     fontSize: FONT_SIZES.md,
+    fontWeight: '500',
   },
-  selectedIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
+
   settingItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
