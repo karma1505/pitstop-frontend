@@ -111,12 +111,12 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
 
         {/* User Profile Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Profile</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Profile Settings</Text>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Profile', 'Profile settings will be implemented later')}
+            onPress={() => Alert.alert('Edit Profile Settings', 'Edit profile settings will be implemented later')}
           >
-            <Text style={[styles.settingText, { color: colors.text }]}>Edit Profile</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>Edit Profile Settings</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -124,6 +124,18 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
             onPress={handleChangePassword}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Change Password</Text>
+            <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Garage Settings Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Garage Settings</Text>
+          <TouchableOpacity
+            style={[styles.settingItem, { backgroundColor: colors.surface }]}
+            onPress={() => Alert.alert('Edit Garage Settings', 'Edit garage settings will be implemented later')}
+          >
+            <Text style={[styles.settingText, { color: colors.text }]}>Edit Garage Settings</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
         </View>
