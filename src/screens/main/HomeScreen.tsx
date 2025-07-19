@@ -9,10 +9,10 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
+import { SPACING, FONT_SIZES } from '../../utils';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useAuth } from '../context';
-import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../../context';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 

@@ -11,13 +11,13 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context';
-import { BackButton } from '../components';
-import { AddressDropdown } from '../components';
-import { getStates } from '../utils/indianAddressData';
-import { isValidEmail } from '../utils/validators';
+import { SPACING, FONT_SIZES } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context';
+import { BackButton } from '../../components';
+import { AddressDropdown } from '../../components';
+import { getStates } from '../../utils/indianAddressData';
+import { isValidEmail } from '../../utils/validators';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 

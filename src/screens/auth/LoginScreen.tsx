@@ -12,11 +12,11 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
-import { Button } from '../components';
-import { useAuth } from '../context';
-import { useTheme } from '../context/ThemeContext';
-import loginLogo from '../assets/images/login-logo.png';
+import { SPACING, FONT_SIZES } from '../../utils';
+import { Button } from '../../components';
+import { useAuth } from '../../context';
+import { useTheme } from '../../context/ThemeContext';
+import loginLogo from '../../assets/images/login-logo.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 

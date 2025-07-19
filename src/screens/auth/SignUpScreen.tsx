@@ -13,17 +13,17 @@ import {
   Animated,
   Image,
 } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
-import { Button } from '../components';
-import { validateEmail, validatePassword, isValidEmail } from '../utils/validators';
-import AddressDropdown from '../components/AddressDropdown';
+import { SPACING, FONT_SIZES } from '../../utils';
+import { Button } from '../../components';
+import { validateEmail, validatePassword, isValidEmail } from '../../utils/validators';
+import AddressDropdown from '../../components/AddressDropdown';
 import { 
   getStates
-} from '../utils/indianAddressData';
+} from '../../utils/indianAddressData';
 import Icon from 'react-native-vector-icons/Ionicons';
-import loginLogo from '../assets/images/login-logo.png';
-import { useAuth } from '../context';
-import { useTheme } from '../context/ThemeContext';
+import loginLogo from '../../assets/images/login-logo.png';
+import { useAuth } from '../../context';
+import { useTheme } from '../../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
 
 interface SignUpData {
