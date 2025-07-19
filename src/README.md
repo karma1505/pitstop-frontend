@@ -1,6 +1,6 @@
-# iGarage App - Source Structure
+# PitStop App - Source Structure
 
-This directory contains the main source code for the iGarage React Native app built with Expo.
+This directory contains the main source code for the PitStop React Native app built with Expo.
 
 ## Directory Structure
 
