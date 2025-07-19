@@ -10,11 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context';
+import { SPACING, FONT_SIZES } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { BackButton } from '../components';
+import { BackButton } from '../../components';
 
 interface ChangePasswordScreenProps {
   onNavigateBack?: () => void;

@@ -10,9 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context';
+import { SPACING, FONT_SIZES } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context';
 
 interface ForgotPasswordScreenProps {
   onNavigateBack?: () => void;

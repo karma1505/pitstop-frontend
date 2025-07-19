@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GarageApi, AuthResponse, ForgotPasswordRequest, OTPVerificationRequest, ResetPasswordRequest, UpdateProfileRequest } from '../api/garageApi';
+import { AuthService, ProfileService, AuthResponse, ForgotPasswordRequest, OTPVerificationRequest, ResetPasswordRequest, UpdateProfileRequest } from '../api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.login({ email, password });
+      const response = await AuthService.login({ email, password });
       
       if (response.success) {
         await AsyncStorage.setItem('auth_token', response.token);
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (userData: any): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.register(userData);
+      const response = await AuthService.register(userData);
       
       if (response.success) {
         await AsyncStorage.setItem('auth_token', response.token);
@@ -129,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const forgotPassword = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.forgotPassword({ phoneNumber });
+      const response = await AuthService.forgotPassword({ phoneNumber });
       
       if (response.success) {
         return { success: true };
@@ -147,7 +147,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const verifyOTP = async (phoneNumber: string, otpCode: string, type: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.verifyOTP({ phoneNumber, otpCode, type });
+      const response = await AuthService.verifyOTP({ phoneNumber, otpCode, type });
       
       if (response.success) {
         return { success: true };
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const resetPassword = async (phoneNumber: string, otpCode: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.resetPassword({ phoneNumber, otpCode, newPassword, confirmPassword });
+      const response = await AuthService.resetPassword({ phoneNumber, otpCode, newPassword, confirmPassword });
       
       if (response.success) {
         return { success: true };
@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const sendLoginOTP = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.sendLoginOTP({ phoneNumber });
+      const response = await AuthService.sendLoginOTP({ phoneNumber });
       
       if (response.success) {
         return { success: true };
@@ -201,7 +201,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithOTP = async (phoneNumber: string, otpCode: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.loginWithOTP({ phoneNumber, otpCode, type: 'LOGIN_OTP' });
+      const response = await AuthService.loginWithOTP({ phoneNumber, otpCode, type: 'LOGIN_OTP' });
       
       if (response.success) {
         await AsyncStorage.setItem('auth_token', response.token);
@@ -226,7 +226,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const changePassword = async (currentPassword: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.changePassword({ currentPassword, newPassword, confirmPassword });
+      const response = await ProfileService.changePassword({ currentPassword, newPassword, confirmPassword });
       
       if (response.success) {
         return { success: true };
@@ -245,7 +245,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const updateProfile = async (profileData: UpdateProfileRequest): Promise<{ success: boolean; error?: string; userInfo?: AuthResponse['userInfo'] }> => {
     try {
       setLoading(true);
-      const response = await GarageApi.updateProfile(profileData);
+      const response = await ProfileService.updateProfile(profileData);
       
       if (response.success) {
         // Update stored user info

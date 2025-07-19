@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions, Image } from 'react-native';
-import { SPACING, FONT_SIZES } from '../utils';
-import { useTheme } from '../context/ThemeContext';
+import { SPACING, FONT_SIZES } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
 import splashLogo from '../assets/images/splash-logo.png';
 
 interface SplashScreenProps {
