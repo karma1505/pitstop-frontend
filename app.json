@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "GarageApp",
-    "slug": "GarageApp",
+    "name": "PitStop",
+    "slug": "PitStop",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

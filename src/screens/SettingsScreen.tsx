@@ -175,7 +175,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
             onPress={() => Alert.alert('About', 'About screen will be implemented later')}
           >
-            <Text style={[styles.settingText, { color: colors.text }]}>About iGarage</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>About PitStop</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity

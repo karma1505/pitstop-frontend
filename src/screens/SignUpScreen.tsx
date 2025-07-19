@@ -354,7 +354,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       
       <View style={styles.header}>
         <Image source={loginLogo} style={styles.logoImage} resizeMode="contain" />
-        <Text style={[styles.title, { color: colors.text }]}>Welcome To iGarage</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Welcome To PitStop</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Start managing your garage</Text>
       </View>
 

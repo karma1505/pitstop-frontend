@@ -1,6 +1,6 @@
 # Assets Directory
 
-This directory contains images and other assets for the iGarage app.
+This directory contains images and other assets for the PitStop app.
 
 ## Required Images
 
@@ -33,7 +33,7 @@ This directory contains images and other assets for the iGarage app.
    - Surface: #1C1C1E (Dark Gray)
 
 2. **Style**: Modern, clean, and professional
-3. **Branding**: Include "iGarage" text or icon elements
+3. **Branding**: Include "PitStop" text or icon elements
 4. **Optimization**: Compress images for optimal performance
 
 ## File Structure
