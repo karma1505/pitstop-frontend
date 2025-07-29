@@ -21,17 +21,17 @@ export interface LoginRequest {
 }
 
 export interface ForgotPasswordRequest {
-  phoneNumber: string;
+  email: string;
 }
 
 export interface OTPVerificationRequest {
-  phoneNumber: string;
+  email: string;
   otpCode: string;
   type: string;
 }
 
 export interface ResetPasswordRequest {
-  phoneNumber: string;
+  email: string;
   otpCode: string;
   newPassword: string;
   confirmPassword: string;

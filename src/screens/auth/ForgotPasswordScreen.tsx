@@ -13,43 +13,49 @@ import {
 import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
+import { BackButton } from '../../components';
 
 interface ForgotPasswordScreenProps {
   onNavigateBack?: () => void;
-  onNavigateToOTP?: (phoneNumber: string) => void;
+  onNavigateToOTP?: (email: string, type?: 'FORGOT_PASSWORD' | 'LOGIN_OTP') => void;
 }
 
 export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }: ForgotPasswordScreenProps) {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const { forgotPassword } = useAuth();
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSendOTP = async () => {
-    if (!phoneNumber.trim()) {
-      Alert.alert('Error', 'Please enter your phone number');
+    if (!email.trim()) {
+      Alert.alert('Error', 'Please enter your email address');
       return;
     }
 
-    if (phoneNumber.length < 10) {
-      Alert.alert('Error', 'Please enter a valid phone number');
+    if (!validateEmail(email.trim())) {
+      Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
     setIsLoading(true);
     try {
-      const result = await forgotPassword(phoneNumber.trim());
+      const result = await forgotPassword(email.trim());
       
       if (result.success) {
         Alert.alert(
           'OTP Sent',
-          'A verification code has been sent to your phone number.',
+          'A verification code has been sent to your email address.',
           [
             {
               text: 'OK',
               onPress: () => {
                 if (onNavigateToOTP) {
-                  onNavigateToOTP(phoneNumber.trim());
+                  onNavigateToOTP(email.trim(), 'FORGOT_PASSWORD');
                 }
               },
             },
@@ -72,22 +78,19 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={onNavigateBack}
-          >
-            <Text style={[styles.backButtonText, { color: colors.primary }]}>← Back</Text>
-          </TouchableOpacity>
+          {onNavigateBack && (
+            <BackButton onPress={onNavigateBack} size="small" style={styles.headerBackButton} />
+          )}
           
           <Text style={[styles.title, { color: colors.text }]}>Forgot Password</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Enter your phone number to receive a verification code
+            Enter your email address to receive a verification code
           </Text>
         </View>
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Phone Number</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Email Address</Text>
             <TextInput
               style={[
                 styles.input,
@@ -97,12 +100,13 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
                   color: colors.inputText,
                 },
               ]}
-              placeholder="Enter your phone number"
+              placeholder="Enter your email address"
               placeholderTextColor={colors.inputPlaceholder}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
-              maxLength={15}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
               autoFocus
             />
           </View>
@@ -124,7 +128,7 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
 
           <View style={styles.helpText}>
             <Text style={[styles.helpTextContent, { color: colors.textSecondary }]}>
-              We'll send a 4-digit verification code to your phone number
+              We'll send a 4-digit verification code to your email address
             </Text>
           </View>
         </View>
@@ -142,15 +146,12 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xl,
+    paddingTop: SPACING.xxl,
     paddingBottom: SPACING.xxl,
   },
-  backButton: {
+  headerBackButton: {
+    marginTop: SPACING.lg,
     marginBottom: SPACING.lg,
-  },
-  backButtonText: {
-    fontSize: FONT_SIZES.md,
-    fontWeight: '600',
   },
   title: {
     fontSize: FONT_SIZES.xxxl,
