@@ -19,7 +19,7 @@ import { ThemeProvider, useTheme } from './context/ThemeContext';
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
   const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile'>('login');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
   const { isAuthenticated, loading } = useAuth();
@@ -53,14 +53,14 @@ function AppContent() {
     setCurrentScreen('otpLogin');
   };
 
-  const handleNavigateToOTPVerification = (phone: string, type: 'FORGOT_PASSWORD' | 'LOGIN_OTP' = 'FORGOT_PASSWORD') => {
-    setPhoneNumber(phone);
+  const handleNavigateToOTPVerification = (email: string, type: 'FORGOT_PASSWORD' | 'LOGIN_OTP' = 'FORGOT_PASSWORD') => {
+    setUserEmail(email);
     setOtpType(type);
     setCurrentScreen('otpVerification');
   };
 
-  const handleNavigateToResetPassword = (phone: string, otp: string) => {
-    setPhoneNumber(phone);
+  const handleNavigateToResetPassword = (email: string, otp: string) => {
+    setUserEmail(email);
     setOtpCode(otp);
     setCurrentScreen('resetPassword');
   };
@@ -79,7 +79,7 @@ function AppContent() {
 
   const handleNavigateBackToLogin = () => {
     setCurrentScreen('login');
-    setPhoneNumber('');
+    setUserEmail('');
     setOtpCode('');
   };
 
@@ -171,7 +171,7 @@ function AppContent() {
     return (
       <>
         <OTPVerificationScreen 
-          phoneNumber={phoneNumber}
+          userEmail={userEmail}
           type={otpType}
           onNavigateBack={handleNavigateBackToLogin} 
           onNavigateToReset={handleNavigateToResetPassword}
@@ -186,7 +186,7 @@ function AppContent() {
     return (
       <>
         <ResetPasswordScreen 
-          phoneNumber={phoneNumber}
+          email={userEmail}
           otpCode={otpCode}
           onNavigateBack={handleNavigateBackToLogin} 
           onNavigateToLogin={handleNavigateBackToLogin} 

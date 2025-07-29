@@ -11,11 +11,11 @@ interface AuthContextType {
   logout: () => Promise<void>;
   loading: boolean;
   // OTP methods
-  forgotPassword: (phoneNumber: string) => Promise<{ success: boolean; error?: string }>;
-  verifyOTP: (phoneNumber: string, otpCode: string, type: string) => Promise<{ success: boolean; error?: string }>;
-  resetPassword: (phoneNumber: string, otpCode: string, newPassword: string, confirmPassword: string) => Promise<{ success: boolean; error?: string }>;
-  sendLoginOTP: (phoneNumber: string) => Promise<{ success: boolean; error?: string }>;
-  loginWithOTP: (phoneNumber: string, otpCode: string) => Promise<{ success: boolean; error?: string }>;
+  forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
+  verifyOTP: (email: string, otpCode: string, type: string) => Promise<{ success: boolean; error?: string }>;
+  resetPassword: (email: string, otpCode: string, newPassword: string, confirmPassword: string) => Promise<{ success: boolean; error?: string }>;
+  sendLoginOTP: (email: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithOTP: (email: string, otpCode: string) => Promise<{ success: boolean; error?: string }>;
   // Change password method
   changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => Promise<{ success: boolean; error?: string }>;
   // Update profile method
@@ -126,10 +126,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // OTP methods
-  const forgotPassword = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
+  const forgotPassword = async (email: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await AuthService.forgotPassword({ phoneNumber });
+      const response = await AuthService.forgotPassword({ email });
       
       if (response.success) {
         return { success: true };
@@ -144,10 +144,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const verifyOTP = async (phoneNumber: string, otpCode: string, type: string): Promise<{ success: boolean; error?: string }> => {
+  const verifyOTP = async (email: string, otpCode: string, type: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log('=== Frontend Debug ===');
+      console.log('Sending email:', email);
+      console.log('Sending OTP code:', otpCode);
+      console.log('Sending type:', type);
+      
       setLoading(true);
-      const response = await AuthService.verifyOTP({ phoneNumber, otpCode, type });
+      const response = await AuthService.verifyOTP({ email, otpCode, type });
+      
+      console.log('API Response:', response);
       
       if (response.success) {
         return { success: true };
@@ -162,10 +169,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const resetPassword = async (phoneNumber: string, otpCode: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; error?: string }> => {
+  const resetPassword = async (email: string, otpCode: string, newPassword: string, confirmPassword: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await AuthService.resetPassword({ phoneNumber, otpCode, newPassword, confirmPassword });
+      const response = await AuthService.resetPassword({ email, otpCode, newPassword, confirmPassword });
       
       if (response.success) {
         return { success: true };
@@ -180,10 +187,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const sendLoginOTP = async (phoneNumber: string): Promise<{ success: boolean; error?: string }> => {
+  const sendLoginOTP = async (email: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
-      const response = await AuthService.sendLoginOTP({ phoneNumber });
+      const response = await AuthService.sendLoginOTP({ email });
       
       if (response.success) {
         return { success: true };
@@ -198,20 +205,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const loginWithOTP = async (phoneNumber: string, otpCode: string): Promise<{ success: boolean; error?: string }> => {
+  const loginWithOTP = async (email: string, otpCode: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log('=== Frontend loginWithOTP Debug ===');
+      console.log('Email:', email);
+      console.log('OTP Code:', otpCode);
+      
       setLoading(true);
-      const response = await AuthService.loginWithOTP({ phoneNumber, otpCode, type: 'LOGIN_OTP' });
+      const response = await AuthService.loginWithOTP({ email, otpCode, type: 'LOGIN_OTP' });
+      
+      console.log('API Response:', response);
+      console.log('Response success:', response.success);
+      console.log('Response token:', response.token ? 'Present' : 'Null');
+      console.log('Response userInfo:', response.userInfo ? 'Present' : 'Null');
       
       if (response.success) {
+        console.log('Storing authentication data...');
         await AsyncStorage.setItem('auth_token', response.token);
         await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
         
+        console.log('Setting authentication state...');
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
+        console.log('Authentication successful!');
         return { success: true };
       } else {
+        console.log('Authentication failed:', response.message);
         return { success: false, error: response.message };
       }
     } catch (error) {

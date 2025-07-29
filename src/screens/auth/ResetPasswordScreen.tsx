@@ -15,14 +15,14 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 
 interface ResetPasswordScreenProps {
-  phoneNumber: string;
+  email: string;
   otpCode: string;
   onNavigateBack?: () => void;
   onNavigateToLogin?: () => void;
 }
 
 export default function ResetPasswordScreen({
-  phoneNumber,
+  email,
   otpCode,
   onNavigateBack,
   onNavigateToLogin,
@@ -53,7 +53,7 @@ export default function ResetPasswordScreen({
 
     setIsLoading(true);
     try {
-      const result = await resetPassword(phoneNumber, otpCode, newPassword, confirmPassword);
+      const result = await resetPassword(email, otpCode, newPassword, confirmPassword);
       
       if (result.success) {
         Alert.alert(
