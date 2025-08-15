@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions, Image } from 'react-native';
-import { SPACING, FONT_SIZES } from '../../utils';
+import { SPACING, FONT_SIZES, SCREEN_NAMES } from '../../utils/constants';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import splashLogo from '../../assets/images/splash-logo.png';
 
 interface SplashScreenProps {
@@ -10,6 +11,7 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const { colors } = useTheme();
+  const { isAuthenticated, onboardingStatus, completionPercentage, loading } = useAuth();
   const fadeAnim = new Animated.Value(0);
   const scaleAnim = new Animated.Value(0.8);
 
@@ -29,13 +31,36 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
       }),
     ]).start();
 
-    // Auto-hide splash screen after 2.5 seconds
+    // Determine navigation based on authentication and onboarding status
+    const determineNavigation = () => {
+      if (!isAuthenticated) {
+        // Not authenticated - go to login
+        onFinish();
+      } else if (loading) {
+        // Still loading - wait
+        return;
+      } else if (onboardingStatus && completionPercentage < 100) {
+        // Authenticated but onboarding incomplete - go to onboarding
+        onFinish();
+      } else {
+        // Authenticated and onboarding complete - go to home
+        onFinish();
+      }
+    };
+
+    // Auto-hide splash screen after 2.5 seconds or when loading is complete
     const timer = setTimeout(() => {
-      onFinish();
+      determineNavigation();
     }, 2500);
 
+    // Also check when loading state changes
+    if (!loading) {
+      clearTimeout(timer);
+      determineNavigation();
+    }
+
     return () => clearTimeout(timer);
-  }, [fadeAnim, scaleAnim, onFinish]);
+  }, [fadeAnim, scaleAnim, onFinish, isAuthenticated, onboardingStatus, completionPercentage, loading]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -52,6 +77,15 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           <Image source={splashLogo} style={styles.logoImage} resizeMode="contain" />
         </View>
         <Text style={[styles.tagline, { color: colors.textSecondary }]}>Your trusted garage finder</Text>
+        
+        {/* Loading indicator */}
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+              Loading...
+            </Text>
+          </View>
+        )}
       </Animated.View>
       
       {/* Background gradient effect */}
@@ -87,6 +121,14 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
     fontWeight: '300',
     letterSpacing: 0.5,
+  },
+  loadingContainer: {
+    marginTop: SPACING.lg,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '500',
   },
   gradientOverlay: {
     position: 'absolute',

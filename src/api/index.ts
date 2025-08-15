@@ -1,9 +1,13 @@
-// API service exports
-export { AuthService } from './services/authService';
-export { GarageService } from './services/garageService';
-export { ProfileService } from './services/profileService';
+// Export all API-related modules
+export * from './client';
+export * from './garageApi';
 export * from './types';
-export { ApiClient } from './client';
 
-// Legacy compatibility - export the old GarageApi for backward compatibility
-export { AuthService as GarageApi } from './services/authService'; 
+// Services
+export { AuthService } from './services/authService';
+export { ProfileService } from './services/profileService';
+export { GarageService } from './services/garageService';
+export { OnboardingService } from './services/onboardingService';
+export { AddressService } from './services/addressService';
+export { PaymentMethodService } from './services/paymentMethodService';
+export { StaffService } from './services/staffService'; 

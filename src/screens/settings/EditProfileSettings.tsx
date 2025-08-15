@@ -18,7 +18,7 @@ import { BackButton } from '../../components';
 import { AddressDropdown } from '../../components';
 import { getStates } from '../../utils/indianAddressData';
 import { isValidEmail } from '../../utils/validators';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 interface ProfileData {

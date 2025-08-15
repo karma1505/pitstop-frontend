@@ -1,91 +1,32 @@
 // API service for garage-related endpoints
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  RegisterRequest,
+  LoginRequest,
+  ForgotPasswordRequest,
+  OTPVerificationRequest,
+  ResetPasswordRequest,
+  ChangePasswordRequest,
+  UpdateProfileRequest,
+  OTPResponse,
+  AuthResponse,
+  CreateGarageRequest,
+  GarageResponse,
+  CreateAddressRequest,
+  UpdateAddressRequest,
+  AddressResponse,
+  CreatePaymentMethodRequest,
+  PaymentMethodResponse,
+  CreateStaffRequest,
+  StaffResponse,
+  OnboardingStatusResponse,
+  NextStepResponse,
+  CompleteOnboardingRequest,
+  OnboardingResponse,
+  Page,
+} from './types';
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.31.235:8080/api/v1';
-
-export interface RegisterRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  state: string;
-  city: string;
-  pincode: string;
-  mobileNumber: string;
-  garageName: string;
-  addressLine1: string;
-  addressLine2: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface ForgotPasswordRequest {
-  phoneNumber: string;
-}
-
-export interface OTPVerificationRequest {
-  phoneNumber: string;
-  otpCode: string;
-  type: string;
-}
-
-export interface ResetPasswordRequest {
-  phoneNumber: string;
-  otpCode: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
-export interface ChangePasswordRequest {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
-export interface UpdateProfileRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  state: string;
-  city: string;
-  pincode: string;
-  mobileNumber: string;
-  garageName: string;
-  addressLine1: string;
-  addressLine2: string;
-}
-
-export interface OTPResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
-  userInfo: {
-    id: string; // Changed from number to string for UUID
-    firstName: string;
-    lastName: string;
-    email: string;
-    garageName: string;
-    state: string;
-    city: string;
-    addressLine1: string;
-    addressLine2: string;
-    mobileNumber: string;
-    pincode: string;
-    createdAt: string;
-  };
-  message: string;
-  success: boolean;
-}
+const BASE_URL = 'http://192.168.31.70:8080/api/v1';
 
 export class GarageApi {
   private static async request<T>(
@@ -211,32 +152,121 @@ export class GarageApi {
     }, true); // Pass true for requireAuth
   }
 
-  // Example API methods
-  static async getGarages() {
-    return this.request('/garages', {}, true);
-  }
-
-  static async getGarage(id: string) {
-    return this.request(`/garages/${id}`, {}, true);
-  }
-
-  static async createGarage(data: any) {
-    return this.request('/garages', {
+  // Garage Management
+  static async createGarage(data: CreateGarageRequest): Promise<GarageResponse> {
+    return this.request<GarageResponse>('/admin/garage', {
       method: 'POST',
       body: JSON.stringify(data),
     }, true);
   }
 
-  static async updateGarage(id: string, data: any) {
-    return this.request(`/garages/${id}`, {
-      method: 'PUT',
+  static async getGarage(id: string): Promise<GarageResponse> {
+    return this.request<GarageResponse>(`/admin/garage/${id}`, {}, true);
+  }
+
+  static async updateGarage(id: string, data: CreateGarageRequest): Promise<GarageResponse> {
+    return this.request<GarageResponse>(`/admin/garage/${id}`, {
+      method: 'PATCH',
       body: JSON.stringify(data),
     }, true);
   }
 
-  static async deleteGarage(id: string) {
-    return this.request(`/garages/${id}`, {
+  // Address Management
+  static async createAddress(data: CreateAddressRequest): Promise<AddressResponse> {
+    return this.request<AddressResponse>('/admin/addresses', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, true);
+  }
+
+  static async getMyAddresses(): Promise<AddressResponse[]> {
+    return this.request<AddressResponse[]>('/admin/addresses', {}, true);
+  }
+
+  static async updateAddress(id: string, data: UpdateAddressRequest): Promise<AddressResponse> {
+    return this.request<AddressResponse>(`/admin/addresses/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }, true);
+  }
+
+  static async deleteAddress(id: string): Promise<void> {
+    return this.request<void>(`/admin/addresses/${id}`, {
       method: 'DELETE',
     }, true);
   }
+
+  // Payment Methods
+  static async createPaymentMethod(data: CreatePaymentMethodRequest): Promise<PaymentMethodResponse> {
+    return this.request<PaymentMethodResponse>('/admin/payment-methods', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, true);
+  }
+
+  static async getMyPaymentMethods(): Promise<PaymentMethodResponse[]> {
+    return this.request<PaymentMethodResponse[]>('/admin/payment-methods', {}, true);
+  }
+
+  static async deactivatePaymentMethod(id: string): Promise<PaymentMethodResponse> {
+    return this.request<PaymentMethodResponse>(`/admin/payment-methods/${id}/status?status=DEACTIVATE`, {
+      method: 'PATCH',
+    }, true);
+  }
+
+  static async activatePaymentMethod(id: string): Promise<PaymentMethodResponse> {
+    return this.request<PaymentMethodResponse>(`/admin/payment-methods/${id}/status?status=ACTIVATE`, {
+      method: 'PATCH',
+    }, true);
+  }
+
+  // Staff Management
+  static async createStaff(data: CreateStaffRequest): Promise<StaffResponse> {
+    return this.request<StaffResponse>('/admin/staff', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, true);
+  }
+
+  static async getAllStaff(page: number = 0, size: number = 10, role?: string): Promise<Page<StaffResponse>> {
+    let endpoint = `/admin/staff?page=${page}&size=${size}`;
+    if (role) {
+      endpoint += `&role=${role}`;
+    }
+    return this.request<Page<StaffResponse>>(endpoint, {}, true);
+  }
+
+  static async getStaffById(id: string): Promise<StaffResponse> {
+    return this.request<StaffResponse>(`/admin/staff/${id}`, {}, true);
+  }
+
+  static async updateStaff(id: string, data: CreateStaffRequest): Promise<StaffResponse> {
+    return this.request<StaffResponse>(`/admin/staff/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }, true);
+  }
+
+  static async updateStaffStatus(id: string, status: string): Promise<StaffResponse> {
+    return this.request<StaffResponse>(`/admin/staff/${id}/status?status=${status}`, {
+      method: 'PATCH',
+    }, true);
+  }
+
+  // Onboarding Status
+  static async getOnboardingStatus(): Promise<OnboardingStatusResponse> {
+    return this.request<OnboardingStatusResponse>('/admin/onboarding/status', {}, true);
+  }
+
+  static async getNextStep(): Promise<NextStepResponse> {
+    return this.request<NextStepResponse>('/admin/onboarding/next-step', {}, true);
+  }
+
+  static async completeOnboarding(data: CompleteOnboardingRequest): Promise<OnboardingResponse> {
+    return this.request<OnboardingResponse>('/admin/onboarding/complete', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, true);
+  }
+
 } 

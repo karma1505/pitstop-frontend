@@ -20,7 +20,7 @@ import AddressDropdown from '../../components/AddressDropdown';
 import { 
   getStates
 } from '../../utils/indianAddressData';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import loginLogo from '../../assets/images/login-logo.png';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
@@ -291,7 +291,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           style={styles.eyeIcon}
           onPress={onTogglePassword}
         >
-          <Icon
+          <Ionicons
             name={showPassword ? 'eye' : 'eye-off'}
             size={20}
             color={colors.textTertiary}
@@ -345,7 +345,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           }
         }}
       >
-        <Icon
+        <Ionicons
           name="arrow-back"
           size={24}
           color={colors.textTertiary}
@@ -478,7 +478,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
         onPress={handleNextPage}
         disabled={!isPage1Complete()}
       >
-        <Icon
+        <Ionicons
           name="chevron-forward"
           size={24}
           color={isPage1Complete() ? colors.onPrimary : colors.textTertiary}
@@ -588,7 +588,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
                 }}
                 keyboardType="phone-pad"
               />
-              <Icon
+              <Ionicons
                 name="chevron-down"
                 size={20}
                 color={colors.textSecondary}
@@ -639,7 +639,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           }}
           onPress={handleBackPage}
         >
-          <Icon
+          <Ionicons
             name="chevron-back"
             size={24}
             color={colors.textTertiary}

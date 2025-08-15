@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { SPACING } from '../utils';
 
@@ -34,7 +34,7 @@ export default function BackButton({ onPress, style, size = 'medium' }: BackButt
       ]}
       onPress={onPress}
     >
-      <Icon
+      <Ionicons
         name="chevron-back"
         size={size === 'small' ? 18 : size === 'large' ? 28 : 24}
         color={colors.onPrimary}

@@ -13,7 +13,7 @@ import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 import { BackButton } from '../../components';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface SettingsScreenProps {
   onNavigateBack?: () => void;
@@ -95,7 +95,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           >
             <View style={styles.themeToggleContent}>
               <View style={styles.themeToggleLeft}>
-                <Icon 
+                <Ionicons 
                   name={theme === 'light' ? 'sunny' : 'moon'} 
                   size={24} 
                   color={theme === 'light' ? colors.primary : colors.primary} 

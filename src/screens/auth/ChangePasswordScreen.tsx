@@ -13,7 +13,7 @@ import {
 import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { BackButton } from '../../components';
 
 interface ChangePasswordScreenProps {
@@ -136,7 +136,7 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
                 style={styles.eyeButton}
                 onPress={() => setShowCurrentPassword(!showCurrentPassword)}
               >
-                <Icon
+                <Ionicons
                   name={showCurrentPassword ? 'eye' : 'eye-off'}
                   size={24}
                   color={colors.textSecondary}
@@ -168,7 +168,7 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
                 style={styles.eyeButton}
                 onPress={() => setShowNewPassword(!showNewPassword)}
               >
-                <Icon
+                <Ionicons
                   name={showNewPassword ? 'eye' : 'eye-off'}
                   size={24}
                   color={colors.textSecondary}
@@ -242,7 +242,7 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
                 style={styles.eyeButton}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Icon
+                <Ionicons
                   name={showConfirmPassword ? 'eye' : 'eye-off'}
                   size={24}
                   color={colors.textSecondary}

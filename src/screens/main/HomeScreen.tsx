@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -19,7 +19,7 @@ const { width: screenWidth } = Dimensions.get('window');
 interface DataCardProps {
   title: string;
   data: Array<{ label: string; value: string; color?: string }>;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
 }
 
@@ -28,7 +28,7 @@ const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => {
     return (
     <TouchableOpacity style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.outline }]} onPress={onPress}>
       <View style={styles.cardHeader}>
-        <Icon name={icon} size={24} color={colors.primary} />
+        <Ionicons name={icon} size={24} color={colors.primary} />
         <Text style={[styles.cardTitle, { color: colors.text }]}>{title}</Text>
       </View>
       
@@ -45,7 +45,7 @@ const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => {
       
       <TouchableOpacity style={styles.moreInfoButton} onPress={onPress}>
         <Text style={[styles.moreInfoText, { color: colors.primary }]}>More Info.</Text>
-        <Icon name="chevron-forward" size={16} color={colors.primary} />
+        <Ionicons name="chevron-forward" size={16} color={colors.primary} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -64,7 +64,7 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
         style={styles.tabItem} 
         onPress={() => onTabPress('home')}
       >
-        <Icon 
+        <Ionicons 
           name="home" 
           size={24} 
           color={activeTab === 'home' ? colors.primary : colors.textSecondary} 
@@ -82,7 +82,7 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
         style={styles.tabItem} 
         onPress={() => onTabPress('myGarage')}
       >
-        <Icon 
+        <Ionicons 
           name="construct" 
           size={24} 
           color={activeTab === 'myGarage' ? colors.primary : colors.textSecondary} 
@@ -100,7 +100,7 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
         style={styles.tabItem} 
         onPress={() => onTabPress('myMarketplace')}
       >
-        <Icon 
+        <Ionicons 
           name="cart" 
           size={24} 
           color={activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary} 
@@ -118,7 +118,7 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
         style={styles.tabItem} 
         onPress={() => onTabPress('settings')}
       >
-        <Icon 
+        <Ionicons 
           name="settings" 
           size={24} 
           color={activeTab === 'settings' ? colors.primary : colors.textSecondary} 
@@ -186,7 +186,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
       >
         <DataCard
           title="Money Data"
-          icon="cash"
+          icon="wallet"
           data={[
             { label: 'Amount To Be Collected', value: '₹45,250', color: colors.primary },
             { label: 'Received Today', value: '₹12,800', color: colors.success },
@@ -197,7 +197,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
         <DataCard
           title="Garage Data"
-          icon="construct"
+          icon="build"
           data={[
             { label: 'Total Vehicles', value: '12' },
             { label: 'Total Workers Present', value: '8' },
@@ -209,7 +209,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
         <DataCard
           title="Inventory Data"
-          icon="cube"
+          icon="cube-outline"
           data={[
             { label: 'Stock Received Today', value: '25 items' },
             { label: 'Stock Purchased Today', value: '₹3,200' },
@@ -221,7 +221,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
         <DataCard
           title="Jobcard Data"
-          icon="document-text"
+          icon="document-text-outline"
           data={[
             { label: 'MH-12-AB-1234', value: 'In Progress' },
             { label: 'DL-01-CD-5678', value: 'Completed' },
@@ -232,7 +232,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
         <DataCard
           title="Revenue Analytics"
-          icon="trending-up"
+          icon="trending-up-outline"
           data={[
             { label: 'This Week', value: '₹89,450', color: colors.success },
             { label: 'Last Week', value: '₹76,200' },
@@ -244,7 +244,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
         <DataCard
           title="Customer Data"
-          icon="people"
+          icon="people-outline"
           data={[
             { label: 'New Customers', value: '5' },
             { label: 'Returning Customers', value: '18' },

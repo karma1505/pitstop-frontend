@@ -17,7 +17,7 @@ import { Button } from '../../components';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
 import loginLogo from '../../assets/images/login-logo.png';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 interface LoginScreenProps {
@@ -150,7 +150,7 @@ export default function LoginScreen({
                   onPress={() => setShowPassword(!showPassword)}
                   disabled={loading}
                 >
-                  <Icon
+                  <Ionicons
                     name={showPassword ? 'eye' : 'eye-off'}
                     size={20}
                     color={colors.textTertiary}
