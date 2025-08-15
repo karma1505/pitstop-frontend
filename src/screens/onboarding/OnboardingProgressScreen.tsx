@@ -21,6 +21,7 @@ const OnboardingProgressScreen: React.FC = () => {
     currentStep,
     getOnboardingStatus,
     loading,
+    isNewlyRegistered,
   } = useAuth();
 
   const [steps, setSteps] = useState([
@@ -162,10 +163,13 @@ const OnboardingProgressScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>
-            Welcome to PitStop!
+            {isNewlyRegistered ? 'Welcome to PitStop!' : 'Complete Your Setup'}
           </Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Let's get your garage set up in just a few steps
+            {isNewlyRegistered 
+              ? "Let's get your garage set up in just a few steps" 
+              : "You're almost there! Complete the remaining steps to unlock all features"
+            }
           </Text>
         </View>
 
@@ -199,7 +203,10 @@ const OnboardingProgressScreen: React.FC = () => {
         {/* Help Text */}
         <View style={styles.helpContainer}>
           <Text style={[styles.helpText, { color: colors.textSecondary }]}>
-            You can complete these steps at any time from your profile settings
+            {isNewlyRegistered 
+              ? "You can complete these steps at any time from your profile settings"
+              : "Complete these steps to unlock all features and start managing your garage efficiently"
+            }
           </Text>
         </View>
       </ScrollView>

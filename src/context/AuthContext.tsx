@@ -51,6 +51,7 @@ interface AuthContextType {
   onboardingStatus: OnboardingStatusResponse | null;
   currentStep: string;
   completionPercentage: number;
+  isNewlyRegistered: boolean;
   
   // Entity states
   garage: GarageResponse | null;
@@ -110,6 +111,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [onboardingStatus, setOnboardingStatus] = useState<OnboardingStatusResponse | null>(null);
   const [currentStep, setCurrentStep] = useState<string>('');
   const [completionPercentage, setCompletionPercentage] = useState<number>(0);
+  const [isNewlyRegistered, setIsNewlyRegistered] = useState<boolean>(false);
   
   // Entity states
   const [garage, setGarage] = useState<GarageResponse | null>(null);
@@ -131,6 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
+        setIsNewlyRegistered(false); // Existing user from storage
         
         // Fetch onboarding status and entities if authenticated
         await getOnboardingStatus();
@@ -154,6 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
+        setIsNewlyRegistered(false); // Existing user logging in
         
         // Fetch onboarding status after login
         await getOnboardingStatus();
@@ -182,6 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
+        setIsNewlyRegistered(true); // New user just registered
         
         // Fetch onboarding status after registration
         await getOnboardingStatus();
@@ -206,6 +211,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(null);
       setUser(null);
       setIsAuthenticated(false);
+      setIsNewlyRegistered(false);
       
       // Clear onboarding and entity states
       setOnboardingStatus(null);
@@ -323,6 +329,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
+        setIsNewlyRegistered(false); // Existing user logging in with OTP
         
         // Fetch onboarding status after login
         await getOnboardingStatus();
@@ -643,6 +650,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     onboardingStatus,
     currentStep,
     completionPercentage,
+    isNewlyRegistered,
     garage,
     addresses,
     paymentMethods,

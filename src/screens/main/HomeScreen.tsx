@@ -98,19 +98,19 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
 
       <TouchableOpacity 
         style={styles.tabItem} 
-        onPress={() => onTabPress('myMarketplace')}
+        onPress={() => onTabPress('jobCards')}
       >
         <Ionicons 
-          name="cart" 
+          name="document-text" 
           size={24} 
-          color={activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary} 
+          color={activeTab === 'jobCards' ? colors.primary : colors.textSecondary} 
         />
         <Text style={[
           styles.tabText, 
-          { color: activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary },
-          activeTab === 'myMarketplace' && styles.activeTabText
+          { color: activeTab === 'jobCards' ? colors.primary : colors.textSecondary },
+          activeTab === 'jobCards' && styles.activeTabText
         ]}>
-          Marketplace
+          JobCards
         </Text>
       </TouchableOpacity>
 
