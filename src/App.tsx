@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { 
   HomeScreen, 
@@ -11,19 +11,59 @@ import {
   ResetPasswordScreen,
   OTPLoginScreen,
   ChangePasswordScreen,
-  EditProfileSettings
+  EditProfileSettings,
+  // Onboarding screens
+  OnboardingWelcomeScreen,
+  GarageRegistrationScreen,
+  PaymentConfigurationScreen,
+  StaffRegistrationScreen,
+  OnboardingCompleteScreen,
 } from './screens';
 import { AuthProvider, useAuth } from './context';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { OnboardingProvider, useOnboarding } from './context/OnboardingContext';
+import { OnboardingService } from './services/onboardingService';
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile' | 'onboarding'>('login');
   const [userEmail, setUserEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, validateToken } = useAuth();
   const { isDark } = useTheme();
+  const { currentStep, goToPreviousStep } = useOnboarding();
+
+  // Check onboarding status when user is authenticated
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      if (isAuthenticated && currentScreen === 'home') {
+        try {
+          // First validate the token to ensure backend is accessible
+          const tokenValidation = await validateToken();
+          
+          if (!tokenValidation.isValid) {
+            console.log('Token validation failed:', tokenValidation.error);
+            // If token is invalid or backend is not accessible, redirect to login
+            setCurrentScreen('login');
+            return;
+          }
+
+          // Now check onboarding status
+          const hasCompletedOnboarding = await OnboardingService.hasCompletedOnboarding();
+          if (!hasCompletedOnboarding) {
+            setCurrentScreen('onboarding');
+          }
+        } catch (error) {
+          console.error('Error checking onboarding status:', error);
+          // If we can't check onboarding status, redirect to login
+          setCurrentScreen('login');
+        }
+      }
+    };
+
+    checkOnboardingStatus();
+  }, [isAuthenticated, currentScreen, validateToken]);
 
   const handleSplashFinish = () => {
     setShowSplash(false);
@@ -87,6 +127,25 @@ function AppContent() {
     setCurrentScreen('settings');
   };
 
+  // Onboarding navigation handlers
+  const handleNavigateToOnboarding = () => {
+    setCurrentScreen('onboarding');
+  };
+
+  const handleNavigateToNextOnboardingStep = () => {
+    // The onboarding context will handle step progression
+    // This is just for screen navigation
+  };
+
+  const handleNavigateBackInOnboarding = () => {
+    // Use the onboarding context to go to the previous step
+    goToPreviousStep();
+  };
+
+  const handleOnboardingComplete = () => {
+    setCurrentScreen('home');
+  };
+
   // Show splash screen initially
   if (showSplash) {
     return (
@@ -107,7 +166,7 @@ function AppContent() {
     );
   }
 
-  // If authenticated, show home screen or settings
+  // If authenticated, show home screen, settings, or onboarding
   if (isAuthenticated) {
     if (currentScreen === 'settings') {
       return (
@@ -138,6 +197,66 @@ function AppContent() {
           <StatusBar style={isDark ? "light" : "dark"} />
         </>
       );
+    }
+
+    if (currentScreen === 'onboarding') {
+      // Render onboarding flow based on current step
+      switch (currentStep) {
+        case 'WELCOME':
+          return (
+            <>
+              <OnboardingWelcomeScreen onNavigateToNext={handleNavigateToNextOnboardingStep} />
+              <StatusBar style={isDark ? "light" : "dark"} />
+            </>
+          );
+        case 'GARAGE_REGISTRATION':
+          return (
+            <>
+              <GarageRegistrationScreen 
+                onNavigateToNext={handleNavigateToNextOnboardingStep}
+                onNavigateBack={handleNavigateBackInOnboarding}
+              />
+              <StatusBar style={isDark ? "light" : "dark"} />
+            </>
+          );
+        case 'PAYMENT_CONFIGURATION':
+          return (
+            <>
+              <PaymentConfigurationScreen 
+                onNavigateToNext={handleNavigateToNextOnboardingStep}
+                onNavigateBack={handleNavigateBackInOnboarding}
+              />
+              <StatusBar style={isDark ? "light" : "dark"} />
+            </>
+          );
+        case 'STAFF_REGISTRATION':
+          return (
+            <>
+              <StaffRegistrationScreen 
+                onNavigateToNext={handleNavigateToNextOnboardingStep}
+                onNavigateBack={handleNavigateBackInOnboarding}
+              />
+              <StatusBar style={isDark ? "light" : "dark"} />
+            </>
+          );
+        case 'COMPLETE':
+          return (
+            <>
+              <OnboardingCompleteScreen 
+                onNavigateToHome={handleOnboardingComplete} 
+                onNavigateBack={handleNavigateBackInOnboarding}
+              />
+              <StatusBar style={isDark ? "light" : "dark"} />
+            </>
+          );
+        default:
+          return (
+            <>
+              <OnboardingWelcomeScreen onNavigateToNext={handleNavigateToNextOnboardingStep} />
+              <StatusBar style={isDark ? "light" : "dark"} />
+            </>
+          );
+      }
     }
     
     return (
@@ -222,7 +341,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppContent />
+        <OnboardingProvider>
+          <AppContent />
+        </OnboardingProvider>
       </AuthProvider>
     </ThemeProvider>
   );

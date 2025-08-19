@@ -59,6 +59,7 @@ export interface ThemeColors {
   success: string;
   warning: string;
   info: string;
+  onSuccess: string;
 }
 
 const lightColors: ThemeColors = {
@@ -109,6 +110,7 @@ const lightColors: ThemeColors = {
   success: '#28A745',
   warning: '#FFC107',
   info: '#17A2B8',
+  onSuccess: '#FFFFFF',
 };
 
 const darkColors: ThemeColors = {
@@ -159,6 +161,7 @@ const darkColors: ThemeColors = {
   success: '#30D158',
   warning: '#FFD60A',
   info: '#64D2FF',
+  onSuccess: '#FFFFFF',
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

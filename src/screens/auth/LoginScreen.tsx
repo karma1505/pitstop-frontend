@@ -17,7 +17,7 @@ import { Button } from '../../components';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
 import loginLogo from '../../assets/images/login-logo.png';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons as Icon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 interface LoginScreenProps {

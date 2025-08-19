@@ -6,13 +6,6 @@ export interface RegisterRequest {
   email: string;
   password: string;
   confirmPassword: string;
-  state: string;
-  city: string;
-  pincode: string;
-  mobileNumber: string;
-  garageName: string;
-  addressLine1: string;
-  addressLine2: string;
 }
 
 export interface LoginRequest {

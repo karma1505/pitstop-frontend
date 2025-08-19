@@ -1,7 +1,7 @@
 // API service for garage-related endpoints
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.31.235:8080/api/v1';
+const BASE_URL = 'http://192.168.31.235:8080/api/v1';
 
 export interface RegisterRequest {
   firstName: string;
