@@ -15,18 +15,17 @@
     "doctor": "expo doctor"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "expo": "~53.0.17",
+    "expo": "53.0.20",
     "expo-haptics": "^14.1.4",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
-    "react-native": "0.79.5",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native": "0.79.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
-    "@types/react-native-vector-icons": "^6.4.18",
     "typescript": "~5.8.3"
   },
   "private": true

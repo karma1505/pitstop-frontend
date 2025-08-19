@@ -13,7 +13,7 @@ import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 import { BackButton } from '../../components';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons as Icon } from '@expo/vector-icons';
 
 interface SettingsScreenProps {
   onNavigateBack?: () => void;

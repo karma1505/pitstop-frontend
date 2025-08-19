@@ -1,6 +1,13 @@
-// Export all components from this file for easy imports
+// Core components
 export { default as Button } from './Button';
 export { default as BackButton } from './BackButton';
-export { default as AddressDropdown } from './AddressDropdown';
+export { OTPInput } from './OTPInput';
 export { OTPTimer } from './OTPTimer';
-export { OTPInput } from './OTPInput'; 
+export { default as AddressDropdown } from './AddressDropdown';
+
+// Form components
+export { FormInput } from './forms/FormInput';
+
+// Onboarding components
+export { OnboardingProgress } from './onboarding/OnboardingProgress';
+export { PaymentMethodCard } from './onboarding/PaymentMethodCard'; 

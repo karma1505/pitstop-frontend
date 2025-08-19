@@ -10,6 +10,8 @@ interface AuthContextType {
   register: (userData: any) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   loading: boolean;
+  // Add token validation method
+  validateToken: () => Promise<{ isValid: boolean; error?: string }>;
   // OTP methods
   forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   verifyOTP: (email: string, otpCode: string, type: string) => Promise<{ success: boolean; error?: string }>;
@@ -53,15 +55,61 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const storedUser = await AsyncStorage.getItem('auth_user');
       
       if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        setIsAuthenticated(true);
+        // Validate the token with the backend
+        const validation = await validateTokenWithBackend(storedToken);
+        
+        if (validation.isValid) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+          setIsAuthenticated(true);
+        } else {
+          // Token is invalid, clear stored data
+          await AsyncStorage.removeItem('auth_token');
+          await AsyncStorage.removeItem('auth_user');
+          console.log('Invalid token found, cleared stored auth data');
+        }
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
+      // If there's an error, clear stored data to be safe
+      await AsyncStorage.removeItem('auth_token');
+      await AsyncStorage.removeItem('auth_user');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Validate token with backend
+  const validateTokenWithBackend = async (token: string): Promise<{ isValid: boolean; error?: string }> => {
+    try {
+      // Use a simple authenticated endpoint to validate the token
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.31.70:8080/api/v1'}/admin/onboarding/status`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        return { isValid: true };
+      } else if (response.status === 401) {
+        return { isValid: false, error: 'Token is invalid or expired' };
+      } else {
+        return { isValid: false, error: `Backend error: ${response.status}` };
+      }
+    } catch (error) {
+      console.error('Token validation error:', error);
+      return { isValid: false, error: 'Backend is not accessible' };
+    }
+  };
+
+  // Public method to validate current token
+  const validateToken = async (): Promise<{ isValid: boolean; error?: string }> => {
+    if (!token) {
+      return { isValid: false, error: 'No token available' };
+    }
+    return validateTokenWithBackend(token);
   };
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
@@ -292,6 +340,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     loading,
+    validateToken,
     forgotPassword,
     verifyOTP,
     resetPassword,
