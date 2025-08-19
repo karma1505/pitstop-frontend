@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons as Icon } from '@expo/vector-icons';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -19,7 +19,7 @@ const { width: screenWidth } = Dimensions.get('window');
 interface DataCardProps {
   title: string;
   data: Array<{ label: string; value: string; color?: string }>;
-  icon: string;
+  icon: keyof typeof Icon.glyphMap;
   onPress: () => void;
 }
 
