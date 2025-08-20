@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
   Image,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
@@ -20,6 +19,8 @@ import loginLogo from '../../assets/images/login-logo.png';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface SignUpData {
   firstName: string;
@@ -38,6 +39,7 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
   const [showPasswords, setShowPasswords] = useState(false);
   const { register, loading } = useAuth();
   const { colors } = useTheme();
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert } = useCustomAlert();
   const [formData, setFormData] = useState<SignUpData>({
     firstName: '',
     lastName: '',
@@ -132,10 +134,9 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
       // Show a summary of validation errors
       const errorMessages = Object.values(errors).filter(Boolean);
       if (errorMessages.length > 0) {
-        Alert.alert(
+        showErrorAlert(
           'Validation Error',
-          `Please fix the following issues:\n\n${errorMessages.join('\n')}`,
-          [{ text: 'OK' }]
+          `Please fix the following issues:\n\n${errorMessages.join('\n')}`
         );
       }
       return;
@@ -162,12 +163,12 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
        } else {
         // Trigger haptic feedback for registration failure
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert('Error', result.error || 'Registration failed. Please try again.');
+        showErrorAlert('Error', result.error || 'Registration failed. Please try again.');
       }
     } catch (error) {
       // Trigger haptic feedback for network error
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Error', 'Registration failed. Please check your connection and try again.');
+      showErrorAlert('Error', 'Registration failed. Please check your connection and try again.');
     }
   };
 
@@ -404,6 +405,22 @@ export default function SignUpScreen({ onNavigateToLogin, onNavigateToHome }: Si
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

@@ -7,13 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Switch,
-  Alert,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 import { BackButton } from '../../components';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface SettingsScreenProps {
   onNavigateBack?: () => void;
@@ -24,6 +25,7 @@ interface SettingsScreenProps {
 export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassword, onNavigateToEditProfile }: SettingsScreenProps) {
   const { colors, theme, setTheme } = useTheme();
   const { logout } = useAuth();
+  const { alertConfig, isVisible, showInfoAlert, showConfirmAlert } = useCustomAlert();
 
   const handleThemeToggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -34,7 +36,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
     if (onNavigateToChangePassword) {
       onNavigateToChangePassword();
     } else {
-      Alert.alert('Change Password', 'Change password functionality will be implemented later');
+      showInfoAlert('Change Password', 'Change password functionality will be implemented later');
     }
   };
 
@@ -42,27 +44,18 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
     if (onNavigateToEditProfile) {
       onNavigateToEditProfile();
     } else {
-      Alert.alert('Edit Profile Settings', 'Edit profile settings will be implemented later');
+      showInfoAlert('Edit Profile Settings', 'Edit profile settings will be implemented later');
     }
   };
 
   const handleLogout = () => {
-    Alert.alert(
+    showConfirmAlert(
       'Logout',
       'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => {
-            logout();
-          },
-        },
-      ]
+      () => logout(),
+      () => {},
+      'Logout',
+      'Cancel'
     );
   };
 
@@ -138,7 +131,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Garage Settings</Text>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Edit Garage Settings', 'Edit garage settings will be implemented later')}
+            onPress={() => showInfoAlert('Edit Garage Settings', 'Edit garage settings will be implemented later')}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Edit Garage Settings</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
@@ -152,7 +145,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
             <Text style={[styles.settingText, { color: colors.text }]}>Push Notifications</Text>
             <Switch
               value={true}
-              onValueChange={() => Alert.alert('Notifications', 'Notification settings will be implemented later')}
+              onValueChange={() => showInfoAlert('Notifications', 'Notification settings will be implemented later')}
               trackColor={{ false: colors.outline, true: colors.primary }}
               thumbColor={colors.onPrimary}
             />
@@ -161,7 +154,7 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
             <Text style={[styles.settingText, { color: colors.text }]}>Email Notifications</Text>
             <Switch
               value={false}
-              onValueChange={() => Alert.alert('Email', 'Email settings will be implemented later')}
+              onValueChange={() => showInfoAlert('Email', 'Email settings will be implemented later')}
               trackColor={{ false: colors.outline, true: colors.primary }}
               thumbColor={colors.onPrimary}
             />
@@ -173,21 +166,21 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           <Text style={[styles.sectionTitle, { color: colors.text }]}>About</Text>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('About', 'About screen will be implemented later')}
+            onPress={() => showInfoAlert('About', 'About screen will be implemented later')}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>About PitStop</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Privacy', 'Privacy policy will be implemented later')}
+            onPress={() => showInfoAlert('Privacy', 'Privacy policy will be implemented later')}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Privacy Policy</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Terms', 'Terms of service will be implemented later')}
+            onPress={() => showInfoAlert('Terms', 'Terms of service will be implemented later')}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Terms of Service</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
@@ -211,6 +204,22 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           </Text>
         </View>
       </ScrollView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

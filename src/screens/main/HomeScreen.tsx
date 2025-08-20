@@ -7,12 +7,13 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Alert,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -143,6 +144,7 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
   const [activeTab, setActiveTab] = useState('home');
   const { user, logout } = useAuth();
   const { colors } = useTheme();
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert, showWarningAlert, showInfoAlert, showConfirmAlert } = useCustomAlert();
 
   const handleTabPress = (tab: string) => {
     setActiveTab(tab);
@@ -155,7 +157,50 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
   const handleCardPress = (cardType: string) => {
     console.log(`Card pressed: ${cardType}`);
-    // TODO: Navigate to expanded view and switch to myGarage
+    
+    // Example of using custom alerts instead of default Alert
+    switch (cardType) {
+      case 'money':
+        showInfoAlert(
+          'Money Data',
+          'This section shows your financial overview including collections, receipts, and expenses.'
+        );
+        break;
+      case 'garage':
+        showSuccessAlert(
+          'Garage Data',
+          'Your garage is running smoothly with 12 vehicles and 8 workers present today.'
+        );
+        break;
+      case 'inventory':
+        showWarningAlert(
+          'Inventory Alert',
+          'You have 3 items with low stock. Consider placing orders soon.'
+        );
+        break;
+      case 'jobcard':
+        showConfirmAlert(
+          'Jobcard Details',
+          'Would you like to view detailed information about all jobcards?',
+          () => console.log('Confirmed jobcard view'),
+          () => console.log('Cancelled jobcard view')
+        );
+        break;
+      case 'revenue':
+        showSuccessAlert(
+          'Revenue Analytics',
+          'Great progress! You\'ve achieved 85% of your monthly target.'
+        );
+        break;
+      case 'customer':
+        showInfoAlert(
+          'Customer Data',
+          'You have 5 new customers and 18 returning customers with a 4.8/5 satisfaction rating.'
+        );
+        break;
+      default:
+        showInfoAlert('Card Pressed', `You pressed the ${cardType} card.`);
+    }
   };
 
   return (
@@ -257,6 +302,22 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
       </ScrollView>
 
       <BottomTab activeTab={activeTab} onTabPress={handleTabPress} />
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

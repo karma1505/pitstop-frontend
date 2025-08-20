@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -15,6 +14,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import { BackButton } from '../../components';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface ChangePasswordScreenProps {
   onNavigateBack?: () => void;
@@ -30,6 +31,7 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { colors } = useTheme();
   const { changePassword } = useAuth();
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert } = useCustomAlert();
 
   // Password validation state
   const [passwordValidation, setPasswordValidation] = useState({
@@ -56,17 +58,17 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
 
   const handleChangePassword = async () => {
     if (!currentPassword.trim()) {
-      Alert.alert('Error', 'Please enter your current password');
+      showErrorAlert('Error', 'Please enter your current password');
       return;
     }
 
     if (!newPassword.trim()) {
-      Alert.alert('Error', 'Please enter a new password');
+      showErrorAlert('Error', 'Please enter a new password');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'New password and confirm password do not match');
+      showErrorAlert('Error', 'New password and confirm password do not match');
       return;
     }
 
@@ -75,25 +77,20 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
       const result = await changePassword(currentPassword, newPassword, confirmPassword);
       
       if (result.success) {
-        Alert.alert(
+        showSuccessAlert(
           'Success',
           'Password changed successfully.',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                if (onNavigateBack) {
-                  onNavigateBack();
-                }
-              },
-            },
-          ]
+          () => {
+            if (onNavigateBack) {
+              onNavigateBack();
+            }
+          }
         );
       } else {
-        Alert.alert('Error', result.error || 'Failed to change password');
+        showErrorAlert('Error', result.error || 'Failed to change password');
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
+      showErrorAlert('Error', 'Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -290,6 +287,22 @@ export default function ChangePasswordScreen({ onNavigateBack }: ChangePasswordS
       <View style={styles.backButtonContainer}>
         <BackButton onPress={onNavigateBack || (() => {})} size="medium" />
       </View>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
   Image,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
@@ -19,6 +18,8 @@ import { useTheme } from '../../context/ThemeContext';
 import loginLogo from '../../assets/images/login-logo.png';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface LoginScreenProps {
   onNavigateToSignUp?: () => void;
@@ -39,10 +40,11 @@ export default function LoginScreen({
   const [loginError, setLoginError] = useState('');
   const { login, loading } = useAuth();
   const { colors } = useTheme();
+  const { alertConfig, isVisible, showErrorAlert, showInfoAlert } = useCustomAlert();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
+      showErrorAlert('Error', 'Please fill in all fields');
       return;
     }
 
@@ -73,7 +75,7 @@ export default function LoginScreen({
     if (onNavigateToSignUp) {
       onNavigateToSignUp();
     } else {
-      Alert.alert('Sign Up', 'Sign up screen will be created later');
+      showInfoAlert('Sign Up', 'Sign up screen will be created later');
     }
   };
 
@@ -81,7 +83,7 @@ export default function LoginScreen({
     if (onNavigateToForgotPassword) {
       onNavigateToForgotPassword();
     } else {
-      Alert.alert('Forgot Password', 'Forgot password functionality will be implemented later');
+      showInfoAlert('Forgot Password', 'Forgot password functionality will be implemented later');
     }
   };
 
@@ -89,7 +91,7 @@ export default function LoginScreen({
     if (onNavigateToOTPLogin) {
       onNavigateToOTPLogin();
     } else {
-      Alert.alert('OTP Login', 'OTP login functionality will be implemented later');
+      showInfoAlert('OTP Login', 'OTP login functionality will be implemented later');
     }
   };
 
@@ -216,6 +218,22 @@ export default function LoginScreen({
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

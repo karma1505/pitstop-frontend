@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  Alert,
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -13,6 +12,8 @@ import { Button, BackButton } from '../../components';
 import { OnboardingProgress } from '../../components/onboarding/OnboardingProgress';
 import { OnboardingService } from '../../services/onboardingService';
 import { SPACING } from '../../utils';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface OnboardingCompleteScreenProps {
   onNavigateToHome: () => void;
@@ -26,6 +27,7 @@ export const OnboardingCompleteScreen: React.FC<OnboardingCompleteScreenProps> =
   const { colors } = useTheme();
   const { stepConfigs, onboardingData, completeOnboarding } = useOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { alertConfig, isVisible, showErrorAlert } = useCustomAlert();
 
   const handleGetStarted = async () => {
     setIsSubmitting(true);
@@ -84,16 +86,11 @@ export const OnboardingCompleteScreen: React.FC<OnboardingCompleteScreenProps> =
       }
     } catch (error: any) {
       console.error('Error completing onboarding:', error);
-      Alert.alert(
+      showErrorAlert(
         'Onboarding Failed',
-        error?.message || 'Failed to complete onboarding. Please try again.',
-        [
-          {
-            text: 'OK',
-            onPress: () => setIsSubmitting(false),
-          },
-        ]
+        error?.message || 'Failed to complete onboarding. Please try again.'
       );
+      setIsSubmitting(false);
     }
   };
 
@@ -249,6 +246,22 @@ export const OnboardingCompleteScreen: React.FC<OnboardingCompleteScreenProps> =
           style={styles.getStartedButton}
         />
       </View>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 };

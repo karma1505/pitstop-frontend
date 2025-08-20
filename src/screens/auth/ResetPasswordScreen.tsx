@@ -6,13 +6,14 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface ResetPasswordScreenProps {
   email: string;
@@ -34,20 +35,21 @@ export default function ResetPasswordScreen({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { colors } = useTheme();
   const { resetPassword } = useAuth();
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert } = useCustomAlert();
 
   const handleResetPassword = async () => {
     if (!newPassword.trim()) {
-      Alert.alert('Error', 'Please enter a new password');
+      showErrorAlert('Error', 'Please enter a new password');
       return;
     }
 
     if (newPassword.length < 8) {
-      Alert.alert('Error', 'Password must be at least 8 characters long');
+      showErrorAlert('Error', 'Password must be at least 8 characters long');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      showErrorAlert('Error', 'Passwords do not match');
       return;
     }
 
@@ -56,25 +58,20 @@ export default function ResetPasswordScreen({
       const result = await resetPassword(email, otpCode, newPassword, confirmPassword);
       
       if (result.success) {
-        Alert.alert(
+        showSuccessAlert(
           'Success',
           'Password reset successfully. You can now login with your new password.',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                if (onNavigateToLogin) {
-                  onNavigateToLogin();
-                }
-              },
-            },
-          ]
+          () => {
+            if (onNavigateToLogin) {
+              onNavigateToLogin();
+            }
+          }
         );
       } else {
-        Alert.alert('Error', result.error || 'Failed to reset password');
+        showErrorAlert('Error', result.error || 'Failed to reset password');
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
+      showErrorAlert('Error', 'Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -183,6 +180,22 @@ export default function ResetPasswordScreen({
           </View>
         </View>
       </KeyboardAvoidingView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

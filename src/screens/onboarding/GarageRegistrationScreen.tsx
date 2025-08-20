@@ -6,7 +6,6 @@ import {
   ScrollView,
   SafeAreaView,
   Switch,
-  Alert,
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -15,6 +14,8 @@ import { OnboardingProgress } from '../../components/onboarding/OnboardingProgre
 import { FormInput } from '../../components/forms/FormInput';
 import { OnboardingService } from '../../services/onboardingService';
 import { SPACING } from '../../utils';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface GarageRegistrationScreenProps {
   onNavigateToNext: () => void;
@@ -37,6 +38,7 @@ export const GarageRegistrationScreen: React.FC<GarageRegistrationScreenProps> =
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { alertConfig, isVisible, showErrorAlert } = useCustomAlert();
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -84,7 +86,7 @@ export const GarageRegistrationScreen: React.FC<GarageRegistrationScreenProps> =
 
     if (!canProceedToNextStep()) {
       console.log('Cannot proceed to next step');
-      Alert.alert('Incomplete Information', 'Please fill in all required fields before proceeding.');
+      showErrorAlert('Incomplete Information', 'Please fill in all required fields before proceeding.');
       return;
     }
 
@@ -272,6 +274,22 @@ export const GarageRegistrationScreen: React.FC<GarageRegistrationScreenProps> =
           style={styles.nextButton}
         />
       </View>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 };

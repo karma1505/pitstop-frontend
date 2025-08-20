@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  Alert,
   TouchableOpacity,
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
@@ -16,6 +15,8 @@ import { FormInput } from '../../components/forms/FormInput';
 import { OnboardingService } from '../../services/onboardingService';
 import { StaffData, StaffRoleType } from '../../types/onboarding';
 import { SPACING } from '../../utils';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface StaffRegistrationScreenProps {
   onNavigateToNext: () => void;
@@ -65,6 +66,7 @@ export const StaffRegistrationScreen: React.FC<StaffRegistrationScreenProps> = (
     role: 'MECHANIC',
   });
   const [staffList, setStaffList] = useState<StaffData[]>(onboardingData.staff);
+  const { alertConfig, isVisible, showErrorAlert } = useCustomAlert();
 
   const validateStaffForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -119,27 +121,14 @@ export const StaffRegistrationScreen: React.FC<StaffRegistrationScreenProps> = (
   };
 
   const handleRemoveStaff = (staffId: string) => {
-    Alert.alert(
-      'Remove Staff Member',
-      'Are you sure you want to remove this staff member?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: () => {
-            const updatedStaffList = staffList.filter(staff => staff.id !== staffId);
-            setStaffList(updatedStaffList);
-            updateStaffData(updatedStaffList);
-          },
-        },
-      ]
-    );
+    const updatedStaffList = staffList.filter(staff => staff.id !== staffId);
+    setStaffList(updatedStaffList);
+    updateStaffData(updatedStaffList);
   };
 
   const handleNext = async () => {
     if (staffList.length === 0) {
-      Alert.alert('No Staff Members', 'Please add at least one staff member before proceeding.');
+      showErrorAlert('No Staff Members', 'Please add at least one staff member before proceeding.');
       return;
     }
 
@@ -343,6 +332,22 @@ export const StaffRegistrationScreen: React.FC<StaffRegistrationScreenProps> = (
           style={styles.nextButton}
         />
       </View>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 };

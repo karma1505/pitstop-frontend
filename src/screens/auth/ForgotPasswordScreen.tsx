@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -14,6 +13,8 @@ import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 import { BackButton } from '../../components';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface ForgotPasswordScreenProps {
   onNavigateBack?: () => void;
@@ -25,6 +26,7 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const { forgotPassword } = useAuth();
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert } = useCustomAlert();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,12 +35,12 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
 
   const handleSendOTP = async () => {
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email address');
+      showErrorAlert('Error', 'Please enter your email address');
       return;
     }
 
     if (!validateEmail(email.trim())) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      showErrorAlert('Error', 'Please enter a valid email address');
       return;
     }
 
@@ -47,25 +49,20 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
       const result = await forgotPassword(email.trim());
       
       if (result.success) {
-        Alert.alert(
+        showSuccessAlert(
           'OTP Sent',
           'A verification code has been sent to your email address.',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                if (onNavigateToOTP) {
-                  onNavigateToOTP(email.trim(), 'FORGOT_PASSWORD');
-                }
-              },
-            },
-          ]
+          () => {
+            if (onNavigateToOTP) {
+              onNavigateToOTP(email.trim(), 'FORGOT_PASSWORD');
+            }
+          }
         );
       } else {
-        Alert.alert('Error', result.error || 'Failed to send OTP');
+        showErrorAlert('Error', result.error || 'Failed to send OTP');
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
+      showErrorAlert('Error', 'Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -133,6 +130,22 @@ export default function ForgotPasswordScreen({ onNavigateBack, onNavigateToOTP }
           </View>
         </View>
       </KeyboardAvoidingView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

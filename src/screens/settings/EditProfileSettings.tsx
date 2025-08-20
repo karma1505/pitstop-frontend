@@ -7,7 +7,6 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -20,6 +19,8 @@ import { getStates } from '../../utils/indianAddressData';
 import { isValidEmail } from '../../utils/validators';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface ProfileData {
   firstName: string;
@@ -42,6 +43,7 @@ export default function EditProfileSettings({ onNavigateBack }: EditProfileSetti
   const { colors } = useTheme();
   const { user, updateProfile, loading } = useAuth();
   const [availableStates] = useState<string[]>(getStates());
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert } = useCustomAlert();
 
   const [formData, setFormData] = useState<ProfileData>({
     firstName: '',
@@ -176,10 +178,9 @@ export default function EditProfileSettings({ onNavigateBack }: EditProfileSetti
       // Show a summary of validation errors
       const errorMessages = Object.values(errors).filter(Boolean);
       if (errorMessages.length > 0) {
-        Alert.alert(
+        showErrorAlert(
           'Validation Error',
-          `Please fix the following issues:\n\n${errorMessages.join('\n')}`,
-          [{ text: 'OK' }]
+          `Please fix the following issues:\n\n${errorMessages.join('\n')}`
         );
       }
       return;
@@ -191,29 +192,24 @@ export default function EditProfileSettings({ onNavigateBack }: EditProfileSetti
       if (result.success) {
         // Trigger haptic feedback for success
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert(
+        showSuccessAlert(
           'Success',
           'Profile updated successfully!',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                if (onNavigateBack) {
-                  onNavigateBack();
-                }
-              },
-            },
-          ]
+          () => {
+            if (onNavigateBack) {
+              onNavigateBack();
+            }
+          }
         );
       } else {
         // Trigger haptic feedback for error
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert('Error', result.error || 'Failed to update profile');
+        showErrorAlert('Error', result.error || 'Failed to update profile');
       }
     } catch (error) {
       // Trigger haptic feedback for network error
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Error', 'Network error. Please try again.');
+      showErrorAlert('Error', 'Network error. Please try again.');
     }
   };
 
@@ -414,6 +410,22 @@ export default function EditProfileSettings({ onNavigateBack }: EditProfileSetti
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }

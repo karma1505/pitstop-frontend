@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  Alert,
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -15,6 +14,8 @@ import { PaymentMethodCard } from '../../components/onboarding/PaymentMethodCard
 import { OnboardingService } from '../../services/onboardingService';
 import { PaymentMethodType } from '../../types/onboarding';
 import { SPACING } from '../../utils';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface PaymentConfigurationScreenProps {
   onNavigateToNext: () => void;
@@ -37,6 +38,7 @@ export const PaymentConfigurationScreen: React.FC<PaymentConfigurationScreenProp
   const [selectedMethods, setSelectedMethods] = useState<PaymentMethodType[]>(
     onboardingData.paymentMethods.map(pm => pm.paymentMethod)
   );
+  const { alertConfig, isVisible, showErrorAlert } = useCustomAlert();
 
   const availablePaymentMethods: PaymentMethodType[] = [
     'CASH',
@@ -57,7 +59,7 @@ export const PaymentConfigurationScreen: React.FC<PaymentConfigurationScreenProp
 
   const handleNext = async () => {
     if (selectedMethods.length === 0) {
-      Alert.alert('No Payment Methods', 'Please select at least one payment method before proceeding.');
+      showErrorAlert('No Payment Methods', 'Please select at least one payment method before proceeding.');
       return;
     }
 
@@ -163,6 +165,22 @@ export const PaymentConfigurationScreen: React.FC<PaymentConfigurationScreenProp
           style={styles.nextButton}
         />
       </View>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 };

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -13,6 +12,8 @@ import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
 import { OTPTimer, OTPInput, BackButton } from '../../components';
+import CustomAlert from '../../components/CustomAlert';
+import { useCustomAlert } from '../../hooks';
 
 interface OTPVerificationScreenProps {
   userEmail: string;
@@ -34,6 +35,7 @@ export default function OTPVerificationScreen({
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const { verifyOTP, forgotPassword, sendLoginOTP, loginWithOTP } = useAuth();
+  const { alertConfig, isVisible, showSuccessAlert, showErrorAlert } = useCustomAlert();
 
   const handleVerifyOTP = async (otpString: string) => {
     console.log('=== OTP Verification Screen Debug ===');
@@ -43,7 +45,7 @@ export default function OTPVerificationScreen({
     console.log('Type:', type);
     
     if (otpString.length !== 4) {
-      Alert.alert('Error', 'Please enter the complete 4-digit code');
+      showErrorAlert('Error', 'Please enter the complete 4-digit code');
       return;
     }
 
@@ -60,7 +62,7 @@ export default function OTPVerificationScreen({
           onNavigateToHome();
         }
         } else {
-          Alert.alert('Error', result.error || 'Login failed');
+          showErrorAlert('Error', result.error || 'Login failed');
         }
       } else {
         // For forgot password, verify OTP first
@@ -72,11 +74,11 @@ export default function OTPVerificationScreen({
             onNavigateToReset(userEmail, otpString);
           }
       } else {
-        Alert.alert('Error', result.error || 'Invalid OTP code');
+        showErrorAlert('Error', result.error || 'Invalid OTP code');
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
+      showErrorAlert('Error', 'Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -93,12 +95,12 @@ export default function OTPVerificationScreen({
       }
 
       if (result.success) {
-        Alert.alert('Success', 'New OTP sent successfully');
+        showSuccessAlert('Success', 'New OTP sent successfully');
       } else {
-        Alert.alert('Error', result.error || 'Failed to resend OTP');
+        showErrorAlert('Error', result.error || 'Failed to resend OTP');
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
+      showErrorAlert('Error', 'Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -145,6 +147,22 @@ export default function OTPVerificationScreen({
           )}
         </View>
       </KeyboardAvoidingView>
+      
+      {/* Custom Alert */}
+      {alertConfig && (
+        <CustomAlert
+          visible={isVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          showCancelButton={alertConfig.showCancelButton}
+          cancelText={alertConfig.cancelText}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onCancel={alertConfig.onCancel}
+          onDismiss={() => {}}
+        />
+      )}
     </SafeAreaView>
   );
 }
