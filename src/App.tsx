@@ -18,6 +18,10 @@ import {
   PaymentConfigurationScreen,
   StaffRegistrationScreen,
   OnboardingCompleteScreen,
+  // Customer screens
+  CustomerListScreen,
+  CustomerFormScreen,
+  CustomerDetailScreen,
 } from './screens';
 import { AuthProvider, useAuth } from './context';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -26,7 +30,8 @@ import { OnboardingService } from './services/onboardingService';
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile' | 'onboarding'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile' | 'onboarding' | 'customerList' | 'customerForm' | 'customerDetail'>('login');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
@@ -259,9 +264,74 @@ function AppContent() {
       }
     }
     
+    // Customer screens
+    if (currentScreen === 'customerList') {
+      return (
+        <>
+          <CustomerListScreen
+            onNavigateBack={handleNavigateBackToHome}
+            onNavigateToCustomerDetail={(customerId) => {
+              setSelectedCustomerId(customerId);
+              setCurrentScreen('customerDetail');
+            }}
+            onNavigateToAddCustomer={() => {
+              setSelectedCustomerId(null);
+              setCurrentScreen('customerForm');
+            }}
+            onNavigateToEditCustomer={(customerId) => {
+              setSelectedCustomerId(customerId);
+              setCurrentScreen('customerForm');
+            }}
+          />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </>
+      );
+    }
+
+    if (currentScreen === 'customerForm') {
+      return (
+        <>
+          <CustomerFormScreen
+            customerId={selectedCustomerId || undefined}
+            onNavigateBack={() => {
+              setSelectedCustomerId(null);
+              setCurrentScreen('customerList');
+            }}
+            onSaveSuccess={() => {
+              setSelectedCustomerId(null);
+              setCurrentScreen('customerList');
+            }}
+          />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </>
+      );
+    }
+
+    if (currentScreen === 'customerDetail') {
+      return (
+        <>
+          <CustomerDetailScreen
+            customerId={selectedCustomerId!}
+            onNavigateBack={() => {
+              setSelectedCustomerId(null);
+              setCurrentScreen('customerList');
+            }}
+            onNavigateToEdit={(customerId) => {
+              setSelectedCustomerId(customerId);
+              setCurrentScreen('customerForm');
+            }}
+          />
+          <StatusBar style={isDark ? "light" : "dark"} />
+        </>
+      );
+    }
+    
     return (
       <>
-        <HomeScreen onNavigateToSettings={handleNavigateToSettings} />
+        <HomeScreen 
+          onNavigateToSettings={handleNavigateToSettings}
+          onNavigateToCustomers={() => setCurrentScreen('customerList')}
+        />
         <StatusBar style={isDark ? "light" : "dark"} />
       </>
     );

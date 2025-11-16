@@ -8,4 +8,7 @@ export * from './main';
 export * from './settings';
 
 // Onboarding screens
-export * from './onboarding'; 
+export * from './onboarding';
+
+// Customer screens
+export * from './customer'; 

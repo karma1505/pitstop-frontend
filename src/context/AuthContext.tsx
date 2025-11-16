@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const validateTokenWithBackend = async (token: string): Promise<{ isValid: boolean; error?: string }> => {
     try {
       // Use a simple authenticated endpoint to validate the token
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.31.70:8080/api/v1'}/admin/onboarding/status`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://10.59.196.55:8080/api/v1'}/admin/onboarding/status`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

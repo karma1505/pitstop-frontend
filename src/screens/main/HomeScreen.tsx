@@ -137,9 +137,10 @@ const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
 
 interface HomeScreenProps {
   onNavigateToSettings?: () => void;
+  onNavigateToCustomers?: () => void;
 }
 
-export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
+export default function HomeScreen({ onNavigateToSettings, onNavigateToCustomers }: HomeScreenProps) {
   const [activeTab, setActiveTab] = useState('home');
   const { user, logout } = useAuth();
   const { colors } = useTheme();
@@ -155,7 +156,10 @@ export default function HomeScreen({ onNavigateToSettings }: HomeScreenProps) {
 
   const handleCardPress = (cardType: string) => {
     console.log(`Card pressed: ${cardType}`);
-    // TODO: Navigate to expanded view and switch to myGarage
+    if (cardType === 'customer' && onNavigateToCustomers) {
+      onNavigateToCustomers();
+    }
+    // TODO: Navigate to expanded view and switch to myGarage for other card types
   };
 
   return (

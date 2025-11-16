@@ -17,7 +17,7 @@ export class OnboardingService {
   // Check backend connectivity
   static async checkBackendConnectivity(): Promise<{ isConnected: boolean; error?: string }> {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.31.70:8080/api/v1'}/admin/onboarding/status`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://10.59.196.55:8080/api/v1'}/admin/onboarding/status`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

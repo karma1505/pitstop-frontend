@@ -1,7 +1,7 @@
 // Shared HTTP client for API requests
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://192.168.31.70:8080/api/v1';
+const BASE_URL = 'http://10.59.196.55:8080/api/v1';
 
 export class ApiClient {
   private static async request<T>(

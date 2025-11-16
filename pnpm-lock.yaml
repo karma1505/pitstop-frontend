@@ -23,6 +23,12 @@ importers:
       expo-status-bar:
         specifier: ~2.2.3
         version: 2.2.3(react-native@0.81.0(@babel/core@7.28.0)(@react-native/metro-config@0.81.1(@babel/core@7.28.0))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+      pitstop:
+        specifier: 'link:'
+        version: 'link:'
+      pnpm:
+        specifier: ^10.22.0
+        version: 10.22.0
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -2205,6 +2211,11 @@ packages:
   pngjs@3.4.0:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
+
+  pnpm@10.22.0:
+    resolution: {integrity: sha512-vwSe/plbKPUn/StBrgR0zikYb37cs79UUIe9Yfu+uyv3U2LRMH/aCcLSiOHkmXh6wS1Py2F6l0cYpgUfLu50HA==}
+    engines: {node: '>=18.12'}
+    hasBin: true
 
   postcss@8.4.49:
     resolution: {integrity: sha512-OCVPnIObs4N29kxTjzLfUryOkvZEq+pf8jTF0lg8E7uETuWHA+v7j3c/xJmiqpX450191LlmZfUKkXxkTry7nA==}
@@ -5622,6 +5633,8 @@ snapshots:
       xmlbuilder: 15.1.1
 
   pngjs@3.4.0: {}
+
+  pnpm@10.22.0: {}
 
   postcss@8.4.49:
     dependencies:
