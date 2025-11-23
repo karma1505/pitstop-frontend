@@ -110,18 +110,10 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <BackButton onPress={handleBackPress} />
-          <View style={styles.headerTitleContainer}>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>My Garage</Text>
-            {user?.garageName && (
-              <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
-                {user.garageName}
-              </Text>
-            )}
-          </View>
-        </View>
+      <View style={[styles.header, { borderBottomColor: colors.outline }]}>
+        <BackButton onPress={handleBackPress} size="small" />
+        <Text style={[styles.headerTitle, { color: colors.text }]}>My Garage</Text>
+        <View style={styles.headerRight} />
       </View>
 
       <ScrollView
@@ -150,28 +142,25 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: SPACING.lg,
   },
   header: {
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.lg,
-    paddingBottom: SPACING.md,
-  },
-  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SPACING.md,
-  },
-  headerTitleContainer: {
-    flex: 1,
-    marginLeft: SPACING.md,
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
+    borderBottomWidth: 1,
+    marginTop: SPACING.md,
   },
   headerTitle: {
     fontSize: FONT_SIZES.xl,
     fontWeight: '600',
-    marginBottom: SPACING.xs,
+    flex: 1,
+    textAlign: 'center',
   },
-  headerSubtitle: {
-    fontSize: FONT_SIZES.sm,
+  headerRight: {
+    width: 40,
   },
   scrollView: {
     flex: 1,
