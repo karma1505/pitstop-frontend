@@ -11,4 +11,7 @@ export * from './settings';
 export * from './onboarding';
 
 // Customer screens
-export * from './customer'; 
+export * from './customer';
+
+// My Garage screens
+export * from './myGarage'; 

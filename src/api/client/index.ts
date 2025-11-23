@@ -1,7 +1,7 @@
 // Shared HTTP client for API requests
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://10.59.196.55:8080/api/v1';
+const BASE_URL = 'http://192.168.1.5:8080/api/v1';
 
 export class ApiClient {
   private static async request<T>(
@@ -40,10 +40,33 @@ export class ApiClient {
       ...options,
     };
 
-    const response = await fetch(url, config);
+    let response: Response;
+    try {
+      response = await fetch(url, config);
+    } catch (fetchError: any) {
+      console.error(`[ApiClient] Network error for ${url}:`, fetchError);
+      // Handle network errors (connection refused, timeout, etc.)
+      if (fetchError.message?.includes('Failed to fetch') || 
+          fetchError.message?.includes('Network request failed') ||
+          fetchError.message?.includes('timeout')) {
+        throw new Error(`Cannot connect to server at ${BASE_URL}. Please check if the server is running and accessible.`);
+      }
+      throw fetchError;
+    }
     
-    // Parse the response first
-    const responseData = await response.json();
+    // Try to parse the response
+    let responseData: any;
+    try {
+      const text = await response.text();
+      if (!text) {
+        responseData = {};
+      } else {
+        responseData = JSON.parse(text);
+      }
+    } catch (parseError) {
+      console.error(`[ApiClient] Failed to parse response from ${url}:`, parseError);
+      throw new Error(`Invalid response from server: ${response.status} ${response.statusText}`);
+    }
     
     // For authentication endpoints, return the response even if it's not successful
     // so the calling code can handle success/failure based on the response data

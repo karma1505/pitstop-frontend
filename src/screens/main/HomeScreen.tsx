@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { SPACING, FONT_SIZES } from '../../utils';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import { useAuth } from '../../context';
 import { useTheme } from '../../context/ThemeContext';
+import { useTabNavigation } from '../../context/TabNavigationContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -51,115 +52,35 @@ const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => {
   );
 };
 
-interface BottomTabProps {
-  activeTab: string;
-  onTabPress: (tab: string) => void;
-}
-
-const BottomTab: React.FC<BottomTabProps> = ({ activeTab, onTabPress }) => {
-  const { colors } = useTheme();
-  return (
-    <View style={[styles.bottomTab, { backgroundColor: colors.surface, borderTopColor: colors.outline }]}>
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => onTabPress('home')}
-      >
-        <Icon 
-          name="home" 
-          size={24} 
-          color={activeTab === 'home' ? colors.primary : colors.textSecondary} 
-        />
-        <Text style={[
-          styles.tabText, 
-          { color: activeTab === 'home' ? colors.primary : colors.textSecondary },
-          activeTab === 'home' && styles.activeTabText
-        ]}>
-          Home
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => onTabPress('myGarage')}
-      >
-        <Icon 
-          name="construct" 
-          size={24} 
-          color={activeTab === 'myGarage' ? colors.primary : colors.textSecondary} 
-        />
-        <Text style={[
-          styles.tabText, 
-          { color: activeTab === 'myGarage' ? colors.primary : colors.textSecondary },
-          activeTab === 'myGarage' && styles.activeTabText
-        ]}>
-          My Garage
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => onTabPress('myMarketplace')}
-      >
-        <Icon 
-          name="cart" 
-          size={24} 
-          color={activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary} 
-        />
-        <Text style={[
-          styles.tabText, 
-          { color: activeTab === 'myMarketplace' ? colors.primary : colors.textSecondary },
-          activeTab === 'myMarketplace' && styles.activeTabText
-        ]}>
-          Marketplace
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => onTabPress('settings')}
-      >
-        <Icon 
-          name="settings" 
-          size={24} 
-          color={activeTab === 'settings' ? colors.primary : colors.textSecondary} 
-        />
-        <Text style={[
-          styles.tabText, 
-          { color: activeTab === 'settings' ? colors.primary : colors.textSecondary },
-          activeTab === 'settings' && styles.activeTabText
-        ]}>
-          Settings
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 interface HomeScreenProps {
   onNavigateToSettings?: () => void;
   onNavigateToCustomers?: () => void;
 }
 
 export default function HomeScreen({ onNavigateToSettings, onNavigateToCustomers }: HomeScreenProps) {
-  const [activeTab, setActiveTab] = useState('home');
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { colors } = useTheme();
-
-  const handleTabPress = (tab: string) => {
-    setActiveTab(tab);
-    if (tab === 'settings' && onNavigateToSettings) {
-      onNavigateToSettings();
-    }
-    // TODO: Navigate to respective screens
-    console.log(`Navigating to ${tab}`);
-  };
+  const { setActiveTab, navigateInMyGarage } = useTabNavigation();
 
   const handleCardPress = (cardType: string) => {
-    console.log(`Card pressed: ${cardType}`);
-    if (cardType === 'customer' && onNavigateToCustomers) {
+    const routeMap: Record<string, 'customers' | 'financial' | 'dashboard' | 'inventory' | 'jobcards' | 'revenue'> = {
+      customer: 'customers',
+      money: 'financial',
+      garage: 'dashboard',
+      inventory: 'inventory',
+      jobcard: 'jobcards',
+      revenue: 'revenue',
+    };
+
+    const route = routeMap[cardType];
+    if (route) {
+      // Switch to My Garage tab and navigate to specific screen
+      setActiveTab('myGarage');
+      navigateInMyGarage(route);
+    } else if (cardType === 'customer' && onNavigateToCustomers) {
+      // Fallback for customer navigation
       onNavigateToCustomers();
     }
-    // TODO: Navigate to expanded view and switch to myGarage for other card types
   };
 
   return (
@@ -259,8 +180,6 @@ export default function HomeScreen({ onNavigateToSettings, onNavigateToCustomers
         />
 
       </ScrollView>
-
-      <BottomTab activeTab={activeTab} onTabPress={handleTabPress} />
     </SafeAreaView>
   );
 }
@@ -356,25 +275,5 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.sm,
     fontWeight: '500',
     marginRight: SPACING.xs,
-  },
-  bottomTab: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    paddingBottom: SPACING.lg,
-    paddingTop: SPACING.sm,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  tabText: {
-    fontSize: FONT_SIZES.xs,
-    marginTop: SPACING.xs,
-    textAlign: 'center',
-  },
-  activeTabText: {
-    fontWeight: '600',
   },
 }); 

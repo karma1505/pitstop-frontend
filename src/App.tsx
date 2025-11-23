@@ -18,19 +18,16 @@ import {
   PaymentConfigurationScreen,
   StaffRegistrationScreen,
   OnboardingCompleteScreen,
-  // Customer screens
-  CustomerListScreen,
-  CustomerFormScreen,
-  CustomerDetailScreen,
 } from './screens';
-import { AuthProvider, useAuth } from './context';
+import { AuthProvider, useAuth, TabNavigationProvider } from './context';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { OnboardingProvider, useOnboarding } from './context/OnboardingContext';
 import { OnboardingService } from './services/onboardingService';
+import TabNavigator from './navigation/TabNavigator';
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile' | 'onboarding' | 'customerList' | 'customerForm' | 'customerDetail'>('login');
+  const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile' | 'onboarding'>('login');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -264,73 +261,13 @@ function AppContent() {
       }
     }
     
-    // Customer screens
-    if (currentScreen === 'customerList') {
-      return (
-        <>
-          <CustomerListScreen
-            onNavigateBack={handleNavigateBackToHome}
-            onNavigateToCustomerDetail={(customerId) => {
-              setSelectedCustomerId(customerId);
-              setCurrentScreen('customerDetail');
-            }}
-            onNavigateToAddCustomer={() => {
-              setSelectedCustomerId(null);
-              setCurrentScreen('customerForm');
-            }}
-            onNavigateToEditCustomer={(customerId) => {
-              setSelectedCustomerId(customerId);
-              setCurrentScreen('customerForm');
-            }}
-          />
-          <StatusBar style={isDark ? "light" : "dark"} />
-        </>
-      );
-    }
-
-    if (currentScreen === 'customerForm') {
-      return (
-        <>
-          <CustomerFormScreen
-            customerId={selectedCustomerId || undefined}
-            onNavigateBack={() => {
-              setSelectedCustomerId(null);
-              setCurrentScreen('customerList');
-            }}
-            onSaveSuccess={() => {
-              setSelectedCustomerId(null);
-              setCurrentScreen('customerList');
-            }}
-          />
-          <StatusBar style={isDark ? "light" : "dark"} />
-        </>
-      );
-    }
-
-    if (currentScreen === 'customerDetail') {
-      return (
-        <>
-          <CustomerDetailScreen
-            customerId={selectedCustomerId!}
-            onNavigateBack={() => {
-              setSelectedCustomerId(null);
-              setCurrentScreen('customerList');
-            }}
-            onNavigateToEdit={(customerId) => {
-              setSelectedCustomerId(customerId);
-              setCurrentScreen('customerForm');
-            }}
-          />
-          <StatusBar style={isDark ? "light" : "dark"} />
-        </>
-      );
-    }
-    
+    // Main app with tab navigation
     return (
       <>
-        <HomeScreen 
+        <TabNavigator
+          selectedCustomerId={selectedCustomerId}
+          onSetSelectedCustomerId={setSelectedCustomerId}
           onNavigateToSettings={handleNavigateToSettings}
-          onNavigateToCustomers={() => setCurrentScreen('customerList')}
         />
         <StatusBar style={isDark ? "light" : "dark"} />
       </>
@@ -412,7 +349,9 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <OnboardingProvider>
-          <AppContent />
+          <TabNavigationProvider>
+            <AppContent />
+          </TabNavigationProvider>
         </OnboardingProvider>
       </AuthProvider>
     </ThemeProvider>

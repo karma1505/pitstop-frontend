@@ -5,4 +5,7 @@ export * from './AuthContext';
 export * from './ThemeContext';
 
 // Onboarding context
-export * from './OnboardingContext'; 
+export * from './OnboardingContext';
+
+// Tab Navigation context
+export * from './TabNavigationContext'; 
