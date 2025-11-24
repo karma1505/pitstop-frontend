@@ -2,18 +2,21 @@ import React, { createContext, useContext, useState, useCallback, ReactNode } fr
 
 export type TabType = 'home' | 'myGarage' | 'marketplace' | 'settings';
 
-export type MyGarageScreenType = 
+export type MyGarageScreenType =
   | 'dashboard'
   | 'customers'
   | 'customerDetail'
   | 'customerForm'
   | 'vehicles'
+  | 'vehicleDetail'
+  | 'vehicleForm'
   | 'jobcards'
   | 'inventory'
   | 'financial'
   | 'revenue'
   | 'staff'
-  | 'appointments'
+  | 'staffDetail'
+  | 'staffForm'
   | 'reports';
 
 interface TabNavigationContextType {

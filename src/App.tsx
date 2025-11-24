@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { 
-  HomeScreen, 
-  SplashScreen, 
-  LoginScreen, 
-  SignUpScreen, 
+import {
+  HomeScreen,
+  SplashScreen,
+  LoginScreen,
+  SignUpScreen,
   SettingsScreen,
   ForgotPasswordScreen,
   OTPVerificationScreen,
@@ -19,7 +19,7 @@ import {
   StaffRegistrationScreen,
   OnboardingCompleteScreen,
 } from './screens';
-import { AuthProvider, useAuth, TabNavigationProvider } from './context';
+import { AuthProvider, useAuth, TabNavigationProvider, useTabNavigation } from './context';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { OnboardingProvider, useOnboarding } from './context/OnboardingContext';
 import { OnboardingService } from './services/onboardingService';
@@ -29,12 +29,16 @@ function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
   const [currentScreen, setCurrentScreen] = useState<'login' | 'signup' | 'home' | 'settings' | 'forgotPassword' | 'otpVerification' | 'resetPassword' | 'otpLogin' | 'changePassword' | 'editProfile' | 'onboarding'>('login');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
   const { isAuthenticated, loading, validateToken } = useAuth();
   const { isDark } = useTheme();
   const { currentStep, goToPreviousStep } = useOnboarding();
+  // TabNavigationProvider wraps AppContent, so this hook is always available
+  const { setActiveTab } = useTabNavigation();
 
   // Check onboarding status when user is authenticated
   useEffect(() => {
@@ -43,7 +47,7 @@ function AppContent() {
         try {
           // First validate the token to ensure backend is accessible
           const tokenValidation = await validateToken();
-          
+
           if (!tokenValidation.isValid) {
             console.log('Token validation failed:', tokenValidation.error);
             // If token is invalid or backend is not accessible, redirect to login
@@ -117,6 +121,9 @@ function AppContent() {
 
   const handleNavigateBackToHome = () => {
     setCurrentScreen('home');
+    // Also reset the active tab to 'home' to ensure TabNavigator shows content
+    // This prevents white screen when activeTab is still 'settings'
+    setActiveTab('home');
   };
 
   const handleNavigateBackToLogin = () => {
@@ -162,7 +169,7 @@ function AppContent() {
   if (loading) {
     return (
       <>
-        <SplashScreen onFinish={() => {}} />
+        <SplashScreen onFinish={() => { }} />
         <StatusBar style={isDark ? "light" : "dark"} />
       </>
     );
@@ -173,8 +180,8 @@ function AppContent() {
     if (currentScreen === 'settings') {
       return (
         <>
-          <SettingsScreen 
-            onNavigateBack={handleNavigateBackToHome} 
+          <SettingsScreen
+            onNavigateBack={handleNavigateBackToHome}
             onNavigateToChangePassword={handleNavigateToChangePassword}
             onNavigateToEditProfile={handleNavigateToEditProfile}
           />
@@ -182,7 +189,7 @@ function AppContent() {
         </>
       );
     }
-    
+
     if (currentScreen === 'changePassword') {
       return (
         <>
@@ -214,7 +221,7 @@ function AppContent() {
         case 'GARAGE_REGISTRATION':
           return (
             <>
-              <GarageRegistrationScreen 
+              <GarageRegistrationScreen
                 onNavigateToNext={handleNavigateToNextOnboardingStep}
                 onNavigateBack={handleNavigateBackInOnboarding}
               />
@@ -224,7 +231,7 @@ function AppContent() {
         case 'PAYMENT_CONFIGURATION':
           return (
             <>
-              <PaymentConfigurationScreen 
+              <PaymentConfigurationScreen
                 onNavigateToNext={handleNavigateToNextOnboardingStep}
                 onNavigateBack={handleNavigateBackInOnboarding}
               />
@@ -234,7 +241,7 @@ function AppContent() {
         case 'STAFF_REGISTRATION':
           return (
             <>
-              <StaffRegistrationScreen 
+              <StaffRegistrationScreen
                 onNavigateToNext={handleNavigateToNextOnboardingStep}
                 onNavigateBack={handleNavigateBackInOnboarding}
               />
@@ -244,8 +251,8 @@ function AppContent() {
         case 'COMPLETE':
           return (
             <>
-              <OnboardingCompleteScreen 
-                onNavigateToHome={handleOnboardingComplete} 
+              <OnboardingCompleteScreen
+                onNavigateToHome={handleOnboardingComplete}
                 onNavigateBack={handleNavigateBackInOnboarding}
               />
               <StatusBar style={isDark ? "light" : "dark"} />
@@ -260,13 +267,17 @@ function AppContent() {
           );
       }
     }
-    
+
     // Main app with tab navigation
     return (
       <>
         <TabNavigator
           selectedCustomerId={selectedCustomerId}
           onSetSelectedCustomerId={setSelectedCustomerId}
+          selectedStaffId={selectedStaffId}
+          onSetSelectedStaffId={setSelectedStaffId}
+          selectedVehicleId={selectedVehicleId}
+          onSetSelectedVehicleId={setSelectedVehicleId}
           onNavigateToSettings={handleNavigateToSettings}
         />
         <StatusBar style={isDark ? "light" : "dark"} />
@@ -296,10 +307,10 @@ function AppContent() {
   if (currentScreen === 'otpVerification') {
     return (
       <>
-        <OTPVerificationScreen 
+        <OTPVerificationScreen
           userEmail={userEmail}
           type={otpType}
-          onNavigateBack={handleNavigateBackToLogin} 
+          onNavigateBack={handleNavigateBackToLogin}
           onNavigateToReset={handleNavigateToResetPassword}
           onNavigateToHome={handleNavigateToHome}
         />
@@ -311,11 +322,11 @@ function AppContent() {
   if (currentScreen === 'resetPassword') {
     return (
       <>
-        <ResetPasswordScreen 
+        <ResetPasswordScreen
           email={userEmail}
           otpCode={otpCode}
-          onNavigateBack={handleNavigateBackToLogin} 
-          onNavigateToLogin={handleNavigateBackToLogin} 
+          onNavigateBack={handleNavigateBackToLogin}
+          onNavigateToLogin={handleNavigateBackToLogin}
         />
         <StatusBar style={isDark ? "light" : "dark"} />
       </>
@@ -333,8 +344,8 @@ function AppContent() {
 
   return (
     <>
-      <LoginScreen 
-        onNavigateToSignUp={handleNavigateToSignUp} 
+      <LoginScreen
+        onNavigateToSignUp={handleNavigateToSignUp}
         onNavigateToHome={handleNavigateToHome}
         onNavigateToForgotPassword={handleNavigateToForgotPassword}
         onNavigateToOTPLogin={handleNavigateToOTPLogin}

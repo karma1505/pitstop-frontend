@@ -39,7 +39,7 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       icon: 'car' as const,
       description: 'Track and manage vehicles',
       onPress: () => navigateInMyGarage('vehicles'),
-      enabled: false, // To be implemented
+      enabled: true,
     },
     {
       id: 'jobcards',
@@ -47,7 +47,7 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       icon: 'document-text' as const,
       description: 'Create and manage job cards',
       onPress: () => navigateInMyGarage('jobcards'),
-      enabled: false, // To be implemented
+      enabled: true, // To be implemented
     },
     {
       id: 'inventory',
@@ -55,7 +55,7 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       icon: 'cube' as const,
       description: 'Manage parts and stock',
       onPress: () => navigateInMyGarage('inventory'),
-      enabled: false, // To be implemented
+      enabled: true, // To be implemented
     },
     {
       id: 'financial',
@@ -63,7 +63,7 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       icon: 'cash' as const,
       description: 'Track payments and expenses',
       onPress: () => navigateInMyGarage('financial'),
-      enabled: false, // To be implemented
+      enabled: true, // To be implemented
     },
     {
       id: 'revenue',
@@ -71,7 +71,7 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       icon: 'trending-up' as const,
       description: 'View revenue reports and analytics',
       onPress: () => navigateInMyGarage('revenue'),
-      enabled: false, // To be implemented
+      enabled: true, // To be implemented
     },
     {
       id: 'staff',
@@ -79,23 +79,15 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       icon: 'people-circle' as const,
       description: 'Manage staff members',
       onPress: () => navigateInMyGarage('staff'),
-      enabled: false, // To be implemented
-    },
-    {
-      id: 'appointments',
-      title: 'Appointments',
-      icon: 'calendar' as const,
-      description: 'Schedule and manage appointments',
-      onPress: () => navigateInMyGarage('appointments'),
-      enabled: false, // To be implemented
+      enabled: true,
     },
     {
       id: 'reports',
-      title: 'Reports',
+      title: 'Report Engine',
       icon: 'bar-chart' as const,
-      description: 'Generate and view reports',
+      description: 'Generate garage reports in Excel',
       onPress: () => navigateInMyGarage('reports'),
-      enabled: false, // To be implemented
+      enabled: true, // To be implemented
     },
   ];
 

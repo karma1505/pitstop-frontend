@@ -26,13 +26,13 @@ interface DataCardProps {
 
 const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => {
   const { colors } = useTheme();
-    return (
+  return (
     <TouchableOpacity style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.outline }]} onPress={onPress}>
       <View style={styles.cardHeader}>
         <Icon name={icon} size={24} color={colors.primary} />
         <Text style={[styles.cardTitle, { color: colors.text }]}>{title}</Text>
       </View>
-      
+
       <View style={styles.cardContent}>
         {data.map((item, index) => (
           <View key={index} style={styles.dataRow}>
@@ -43,7 +43,7 @@ const DataCard: React.FC<DataCardProps> = ({ title, data, icon, onPress }) => {
           </View>
         ))}
       </View>
-      
+
       <TouchableOpacity style={styles.moreInfoButton} onPress={onPress}>
         <Text style={[styles.moreInfoText, { color: colors.primary }]}>More Info.</Text>
         <Icon name="chevron-forward" size={16} color={colors.primary} />
@@ -94,7 +94,7 @@ export default function HomeScreen({ onNavigateToSettings, onNavigateToCustomers
             </Text>
           </View>
         </View>
-        
+
         {user && (
           <View style={[styles.userInfo, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
             <Text style={[styles.userInfoText, { color: colors.textSecondary }]}>
@@ -104,7 +104,7 @@ export default function HomeScreen({ onNavigateToSettings, onNavigateToCustomers
         )}
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -127,7 +127,6 @@ export default function HomeScreen({ onNavigateToSettings, onNavigateToCustomers
             { label: 'Total Vehicles', value: '12' },
             { label: 'Total Workers Present', value: '8' },
             { label: 'Parts Received Today', value: '15' },
-            { label: 'Total Appointments Today', value: '6' },
           ]}
           onPress={() => handleCardPress('garage')}
         />

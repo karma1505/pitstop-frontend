@@ -25,6 +25,13 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
   const { colors, theme, setTheme } = useTheme();
   const { logout } = useAuth();
 
+  // Ensure back button always navigates to home
+  const handleBackPress = () => {
+    if (onNavigateBack) {
+      onNavigateBack();
+    }
+  };
+
   const handleThemeToggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -76,9 +83,11 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerTop}>
-            {onNavigateBack && (
-              <BackButton onPress={onNavigateBack} size="small" style={styles.headerBackButton} />
-            )}
+            <BackButton
+              onPress={handleBackPress}
+              size="small"
+              style={styles.headerBackButton}
+            />
             <Text style={[styles.headerTitle, { color: colors.text }]}>Settings</Text>
             <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
               Customize your app experience
@@ -95,10 +104,10 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           >
             <View style={styles.themeToggleContent}>
               <View style={styles.themeToggleLeft}>
-                <Icon 
-                  name={theme === 'light' ? 'sunny' : 'moon'} 
-                  size={24} 
-                  color={theme === 'light' ? colors.primary : colors.primary} 
+                <Icon
+                  name={theme === 'light' ? 'sunny' : 'moon'}
+                  size={24}
+                  color={theme === 'light' ? colors.primary : colors.primary}
                 />
                 <Text style={[styles.themeToggleText, { color: colors.text }]}>
                   {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
@@ -170,12 +179,12 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
 
         {/* About Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>About</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Links</Text>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
             onPress={() => Alert.alert('About', 'About screen will be implemented later')}
           >
-            <Text style={[styles.settingText, { color: colors.text }]}>About PitStop</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>About PitStop Suite</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity

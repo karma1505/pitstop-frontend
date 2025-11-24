@@ -13,5 +13,8 @@ export * from './onboarding';
 // Customer screens
 export * from './customer';
 
+// Staff screens
+export * from './staff';
+
 // My Garage screens
 export * from './myGarage'; 

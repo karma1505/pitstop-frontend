@@ -6,15 +6,33 @@ import {
   CustomerFormScreen,
   CustomerDetailScreen,
 } from '../screens/customer';
+import {
+  StaffListScreen,
+  StaffDetailScreen,
+  StaffFormScreen,
+} from '../screens/staff';
+import {
+  VehicleListScreen,
+  VehicleDetailScreen,
+  VehicleFormScreen,
+} from '../screens/vehicle';
 
 interface MyGarageNavigatorProps {
   selectedCustomerId?: string | null;
   onSetSelectedCustomerId?: (id: string | null) => void;
+  selectedStaffId?: string | null;
+  onSetSelectedStaffId?: (id: string | null) => void;
+  selectedVehicleId?: string | null;
+  onSetSelectedVehicleId?: (id: string | null) => void;
 }
 
 export default function MyGarageNavigator({
   selectedCustomerId,
   onSetSelectedCustomerId,
+  selectedStaffId,
+  onSetSelectedStaffId,
+  selectedVehicleId,
+  onSetSelectedVehicleId,
 }: MyGarageNavigatorProps) {
   const {
     myGarageScreen,
@@ -70,6 +88,92 @@ export default function MyGarageNavigator({
     navigateInMyGarage('customerForm', { customerId });
   };
 
+  const handleNavigateToStaffDetail = (staffId: string) => {
+    if (onSetSelectedStaffId) {
+      onSetSelectedStaffId(staffId);
+    }
+    navigateInMyGarage('staffDetail', { staffId });
+  };
+
+  const handleNavigateToAddStaff = () => {
+    if (onSetSelectedStaffId) {
+      onSetSelectedStaffId(null);
+    }
+    navigateInMyGarage('staffForm');
+  };
+
+  const handleNavigateToEditStaff = (staffId: string) => {
+    if (onSetSelectedStaffId) {
+      onSetSelectedStaffId(staffId);
+    }
+    navigateInMyGarage('staffForm', { staffId });
+  };
+
+  const handleStaffDetailBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleStaffDetailEdit = (staffId: string) => {
+    if (onSetSelectedStaffId) {
+      onSetSelectedStaffId(staffId);
+    }
+    navigateInMyGarage('staffForm', { staffId });
+  };
+
+  const handleStaffFormBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleStaffFormSuccess = () => {
+    if (onSetSelectedStaffId) {
+      onSetSelectedStaffId(null);
+    }
+    navigateInMyGarage('staff');
+  };
+
+  const handleNavigateToVehicleDetail = (vehicleId: string) => {
+    if (onSetSelectedVehicleId) {
+      onSetSelectedVehicleId(vehicleId);
+    }
+    navigateInMyGarage('vehicleDetail', { vehicleId });
+  };
+
+  const handleNavigateToAddVehicle = () => {
+    if (onSetSelectedVehicleId) {
+      onSetSelectedVehicleId(null);
+    }
+    navigateInMyGarage('vehicleForm');
+  };
+
+  const handleNavigateToEditVehicle = (vehicleId: string) => {
+    if (onSetSelectedVehicleId) {
+      onSetSelectedVehicleId(vehicleId);
+    }
+    navigateInMyGarage('vehicleForm', { vehicleId });
+  };
+
+  const handleVehicleDetailBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleVehicleDetailEdit = (vehicleId: string) => {
+    if (onSetSelectedVehicleId) {
+      onSetSelectedVehicleId(vehicleId);
+    }
+    navigateInMyGarage('vehicleForm', { vehicleId });
+  };
+
+  const handleVehicleFormBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleVehicleFormSuccess = () => {
+    if (onSetSelectedVehicleId) {
+      onSetSelectedVehicleId(null);
+    }
+    navigateInMyGarage('vehicles');
+  };
+
   switch (myGarageScreen) {
     case 'dashboard':
       return <MyGarageDashboardScreen onNavigateBack={handleNavigateBack} />;
@@ -102,14 +206,67 @@ export default function MyGarageNavigator({
         />
       );
 
-    // Placeholder screens for future implementation
+    case 'staff':
+      return (
+        <StaffListScreen
+          onNavigateBack={handleNavigateBack}
+          onNavigateToStaffDetail={handleNavigateToStaffDetail}
+          onNavigateToAddStaff={handleNavigateToAddStaff}
+          onNavigateToEditStaff={handleNavigateToEditStaff}
+        />
+      );
+
+    case 'staffDetail':
+      return (
+        <StaffDetailScreen
+          staffId={selectedStaffId || myGarageParams?.staffId || ''}
+          onNavigateBack={handleStaffDetailBack}
+          onNavigateToEdit={handleStaffDetailEdit}
+        />
+      );
+
+    case 'staffForm':
+      return (
+        <StaffFormScreen
+          staffId={selectedStaffId || myGarageParams?.staffId || undefined}
+          onNavigateBack={handleStaffFormBack}
+          onSaveSuccess={handleStaffFormSuccess}
+        />
+      );
+
     case 'vehicles':
+      return (
+        <VehicleListScreen
+          onNavigateBack={handleNavigateBack}
+          onNavigateToVehicleDetail={handleNavigateToVehicleDetail}
+          onNavigateToAddVehicle={handleNavigateToAddVehicle}
+          onNavigateToEditVehicle={handleNavigateToEditVehicle}
+        />
+      );
+
+    case 'vehicleDetail':
+      return (
+        <VehicleDetailScreen
+          vehicleId={selectedVehicleId || myGarageParams?.vehicleId || ''}
+          onNavigateBack={handleVehicleDetailBack}
+          onNavigateToEdit={handleVehicleDetailEdit}
+        />
+      );
+
+    case 'vehicleForm':
+      return (
+        <VehicleFormScreen
+          vehicleId={selectedVehicleId || myGarageParams?.vehicleId || undefined}
+          onNavigateBack={handleVehicleFormBack}
+          onSaveSuccess={handleVehicleFormSuccess}
+        />
+      );
+
+    // Placeholder screens for future implementation
     case 'jobcards':
     case 'inventory':
     case 'financial':
     case 'revenue':
-    case 'staff':
-    case 'appointments':
     case 'reports':
       return (
         <MyGarageDashboardScreen
