@@ -1,7 +1,8 @@
 // API service for garage-related endpoints
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_CONFIG } from '../utils';
 
-const BASE_URL = 'http://192.168.1.5:8080/api/v1';
+const BASE_URL = API_CONFIG.BASE_URL;
 
 export interface RegisterRequest {
   firstName: string;
@@ -94,7 +95,7 @@ export class GarageApi {
     requireAuth: boolean = false
   ): Promise<T> {
     const url = `${BASE_URL}${endpoint}`;
-    
+
     // Get auth token for authenticated requests
     let authToken = null;
     if (requireAuth) {
@@ -104,7 +105,7 @@ export class GarageApi {
         console.error('Error getting auth token:', error);
       }
     }
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -113,36 +114,36 @@ export class GarageApi {
     if (requireAuth && authToken) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
-    
+
     // Merge with any additional headers from options
     if (options.headers) {
       Object.assign(headers, options.headers);
     }
-    
+
     const config: RequestInit = {
       headers,
       ...options,
     };
 
     const response = await fetch(url, config);
-    
+
     // Parse the response first
     const responseData = await response.json();
-    
+
     // For authentication endpoints, return the response even if it's not successful
     // so the calling code can handle success/failure based on the response data
-    if (endpoint.includes('/admin/login') || endpoint.includes('/admin/register') || 
-        endpoint.includes('/admin/forgot-password') || endpoint.includes('/admin/verify-otp') ||
-        endpoint.includes('/admin/reset-password') || endpoint.includes('/admin/send-login-otp') ||
-        endpoint.includes('/admin/login-with-otp')) {
+    if (endpoint.includes('/admin/login') || endpoint.includes('/admin/register') ||
+      endpoint.includes('/admin/forgot-password') || endpoint.includes('/admin/verify-otp') ||
+      endpoint.includes('/admin/reset-password') || endpoint.includes('/admin/send-login-otp') ||
+      endpoint.includes('/admin/login-with-otp')) {
       return responseData;
     }
-    
+
     // For other endpoints, throw error if not successful
     if (!response.ok) {
       throw new Error(responseData.message || `API Error: ${response.status} ${response.statusText}`);
     }
-    
+
     return responseData;
   }
 

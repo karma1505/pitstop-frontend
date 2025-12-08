@@ -1,7 +1,8 @@
 // Shared HTTP client for API requests
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_CONFIG } from '../../utils';
 
-const BASE_URL = 'http://192.168.1.5:8080/api/v1';
+const BASE_URL = API_CONFIG.BASE_URL;
 
 export class ApiClient {
   private static async request<T>(
@@ -10,7 +11,7 @@ export class ApiClient {
     requireAuth: boolean = false
   ): Promise<T> {
     const url = `${BASE_URL}${endpoint}`;
-    
+
     // Get auth token for authenticated requests
     let authToken = null;
     if (requireAuth) {
@@ -20,7 +21,7 @@ export class ApiClient {
         console.error('Error getting auth token:', error);
       }
     }
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -29,12 +30,12 @@ export class ApiClient {
     if (requireAuth && authToken) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
-    
+
     // Merge with any additional headers from options
     if (options.headers) {
       Object.assign(headers, options.headers);
     }
-    
+
     const config: RequestInit = {
       headers,
       ...options,
@@ -46,14 +47,14 @@ export class ApiClient {
     } catch (fetchError: any) {
       console.error(`[ApiClient] Network error for ${url}:`, fetchError);
       // Handle network errors (connection refused, timeout, etc.)
-      if (fetchError.message?.includes('Failed to fetch') || 
-          fetchError.message?.includes('Network request failed') ||
-          fetchError.message?.includes('timeout')) {
+      if (fetchError.message?.includes('Failed to fetch') ||
+        fetchError.message?.includes('Network request failed') ||
+        fetchError.message?.includes('timeout')) {
         throw new Error(`Cannot connect to server at ${BASE_URL}. Please check if the server is running and accessible.`);
       }
       throw fetchError;
     }
-    
+
     // Try to parse the response
     let responseData: any;
     try {
@@ -67,21 +68,21 @@ export class ApiClient {
       console.error(`[ApiClient] Failed to parse response from ${url}:`, parseError);
       throw new Error(`Invalid response from server: ${response.status} ${response.statusText}`);
     }
-    
+
     // For authentication endpoints, return the response even if it's not successful
     // so the calling code can handle success/failure based on the response data
-    if (endpoint.includes('/admin/login') || endpoint.includes('/admin/register') || 
-        endpoint.includes('/admin/forgot-password') || endpoint.includes('/admin/verify-otp') ||
-        endpoint.includes('/admin/reset-password') || endpoint.includes('/admin/send-login-otp') ||
-        endpoint.includes('/admin/login-with-otp')) {
+    if (endpoint.includes('/admin/login') || endpoint.includes('/admin/register') ||
+      endpoint.includes('/admin/forgot-password') || endpoint.includes('/admin/verify-otp') ||
+      endpoint.includes('/admin/reset-password') || endpoint.includes('/admin/send-login-otp') ||
+      endpoint.includes('/admin/login-with-otp')) {
       return responseData;
     }
-    
+
     // For other endpoints, throw error if not successful
     if (!response.ok) {
       throw new Error(responseData.message || `API Error: ${response.status} ${response.statusText}`);
     }
-    
+
     return responseData;
   }
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthService, ProfileService, AuthResponse, ForgotPasswordRequest, OTPVerificationRequest, ResetPasswordRequest, UpdateProfileRequest } from '../api';
+import { API_CONFIG } from '../utils';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -53,11 +54,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const storedToken = await AsyncStorage.getItem('auth_token');
       const storedUser = await AsyncStorage.getItem('auth_user');
-      
+
       if (storedToken && storedUser) {
         // Validate the token with the backend
         const validation = await validateTokenWithBackend(storedToken);
-        
+
         if (validation.isValid) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
@@ -83,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const validateTokenWithBackend = async (token: string): Promise<{ isValid: boolean; error?: string }> => {
     try {
       // Use a simple authenticated endpoint to validate the token
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.5:8080/api/v1'}/admin/onboarding/status`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || API_CONFIG.BASE_URL}/admin/onboarding/status`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -116,11 +117,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await AuthService.login({ email, password });
-      
+
       if (response.success) {
         await AsyncStorage.setItem('auth_token', response.token);
         await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
-        
+
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
@@ -134,7 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Login error details:', {
         message: errorMessage,
         stack: error?.stack,
-        url: `${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.5:8080/api/v1'}/admin/login`
+        url: `${process.env.EXPO_PUBLIC_API_BASE_URL || API_CONFIG.BASE_URL}/admin/login`
       });
       return { success: false, error: errorMessage };
     } finally {
@@ -146,11 +147,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await AuthService.register(userData);
-      
+
       if (response.success) {
         await AsyncStorage.setItem('auth_token', response.token);
         await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
-        
+
         setToken(response.token);
         setUser(response.userInfo);
         setIsAuthenticated(true);
@@ -170,7 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await AsyncStorage.removeItem('auth_token');
       await AsyncStorage.removeItem('auth_user');
-      
+
       setToken(null);
       setUser(null);
       setIsAuthenticated(false);
@@ -184,7 +185,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await AuthService.forgotPassword({ email });
-      
+
       if (response.success) {
         return { success: true };
       } else {
@@ -204,12 +205,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Sending email:', email);
       console.log('Sending OTP code:', otpCode);
       console.log('Sending type:', type);
-      
+
       setLoading(true);
       const response = await AuthService.verifyOTP({ email, otpCode, type });
-      
+
       console.log('API Response:', response);
-      
+
       if (response.success) {
         return { success: true };
       } else {
@@ -227,7 +228,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await AuthService.resetPassword({ email, otpCode, newPassword, confirmPassword });
-      
+
       if (response.success) {
         return { success: true };
       } else {
@@ -245,7 +246,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await AuthService.sendLoginOTP({ email });
-      
+
       if (response.success) {
         return { success: true };
       } else {
@@ -264,20 +265,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('=== Frontend loginWithOTP Debug ===');
       console.log('Email:', email);
       console.log('OTP Code:', otpCode);
-      
+
       setLoading(true);
       const response = await AuthService.loginWithOTP({ email, otpCode, type: 'LOGIN_OTP' });
-      
+
       console.log('API Response:', response);
       console.log('Response success:', response.success);
       console.log('Response token:', response.token ? 'Present' : 'Null');
       console.log('Response userInfo:', response.userInfo ? 'Present' : 'Null');
-      
+
       if (response.success) {
         console.log('Storing authentication data...');
         await AsyncStorage.setItem('auth_token', response.token);
         await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
-        
+
         console.log('Setting authentication state...');
         setToken(response.token);
         setUser(response.userInfo);
@@ -301,7 +302,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await ProfileService.changePassword({ currentPassword, newPassword, confirmPassword });
-      
+
       if (response.success) {
         return { success: true };
       } else {
@@ -320,12 +321,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const response = await ProfileService.updateProfile(profileData);
-      
+
       if (response.success) {
         // Update stored user info
         await AsyncStorage.setItem('auth_user', JSON.stringify(response.userInfo));
         setUser(response.userInfo);
-        
+
         return { success: true, userInfo: response.userInfo };
       } else {
         return { success: false, error: response.message };

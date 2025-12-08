@@ -12,23 +12,24 @@ import {
   PaymentMethodData,
   StaffData,
 } from '../types/onboarding';
+import { API_CONFIG } from '../utils';
 
 export class OnboardingService {
   // Check backend connectivity
   static async checkBackendConnectivity(): Promise<{ isConnected: boolean; error?: string }> {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.5:8080/api/v1'}/admin/onboarding/status`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || API_CONFIG.BASE_URL}/admin/onboarding/status`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       // Even if we get a 401 (unauthorized), it means the backend is running
       if (response.status === 403) {
         return { isConnected: true };
       }
-      
+
       return { isConnected: response.ok };
     } catch (error) {
       console.error('Backend connectivity check failed:', error);
@@ -180,7 +181,7 @@ export class OnboardingService {
   }> {
     try {
       const status = await this.getOnboardingStatus();
-      
+
       switch (step) {
         case 'GARAGE_REGISTRATION':
           return {
@@ -191,21 +192,21 @@ export class OnboardingService {
               ...(status.hasAddress ? [] : ['address']),
             ],
           };
-        
+
         case 'PAYMENT_CONFIGURATION':
           return {
             isValid: status.hasPaymentMethods,
             message: status.hasPaymentMethods ? undefined : 'Please configure at least one payment method',
             missingFields: status.hasPaymentMethods ? [] : ['payment methods'],
           };
-        
+
         case 'STAFF_REGISTRATION':
           return {
             isValid: status.hasStaff,
             message: status.hasStaff ? undefined : 'Please add at least one staff member',
             missingFields: status.hasStaff ? [] : ['staff'],
           };
-        
+
         default:
           return { isValid: true };
       }

@@ -9,6 +9,9 @@ import {
   Switch,
   Alert,
 } from 'react-native';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system/legacy';
+import { Asset } from 'expo-asset';
 import { SPACING, FONT_SIZES } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context';
@@ -71,6 +74,76 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
         },
       ]
     );
+  };
+
+  const handlePrivacyPolicy = async () => {
+    try {
+      console.log('[PrivacyPolicy] Starting to open Privacy Policy PDF');
+
+      const asset = Asset.fromModule(require('../../assets/privacy_policy.pdf'));
+      // Ensure the asset is initialized (gets the URI)
+      if (!asset.uri) {
+        await asset.downloadAsync();
+      }
+
+      // Use legacy cacheDirectory which should be defined
+      const targetPath = `${FileSystem.cacheDirectory}Privacy_Policy_PitStop_GMS.pdf`;
+
+      console.log('[PrivacyPolicy] Downloading/Saving to:', targetPath);
+      // Download using legacy API
+      await FileSystem.downloadAsync(asset.uri, targetPath);
+
+      const isAvailable = await Sharing.isAvailableAsync();
+
+      if (isAvailable) {
+        console.log('[PrivacyPolicy] Attempting to share/open PDF...');
+        await Sharing.shareAsync(targetPath, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Privacy Policy',
+          UTI: 'com.adobe.pdf',
+        });
+        console.log('[PrivacyPolicy] Share action completed');
+      } else {
+        Alert.alert('Error', 'Sharing is not available on this device');
+      }
+    } catch (error) {
+      console.error('[PrivacyPolicy] Error opening Privacy Policy:', error);
+      Alert.alert('Error', 'Unable to open Privacy Policy. Please try again.');
+    }
+  };
+
+  const handleTermsOfService = async () => {
+    try {
+      console.log('[TermsOfService] Starting to open Terms of Service PDF');
+
+      const asset = Asset.fromModule(require('../../assets/terms_conditions.pdf'));
+      // Ensure the asset is initialized
+      if (!asset.uri) {
+        await asset.downloadAsync();
+      }
+
+      const targetPath = `${FileSystem.cacheDirectory}Terms_and_Conditions_PitStop_GMS.pdf`;
+
+      console.log('[TermsOfService] Downloading/Saving to:', targetPath);
+      await FileSystem.downloadAsync(asset.uri, targetPath);
+
+      const isAvailable = await Sharing.isAvailableAsync();
+
+      if (isAvailable) {
+        console.log('[TermsOfService] Attempting to share/open PDF...');
+        await Sharing.shareAsync(targetPath, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Terms of Service',
+          UTI: 'com.adobe.pdf',
+        });
+        console.log('[TermsOfService] Share action completed');
+      } else {
+        Alert.alert('Error', 'Sharing is not available on this device');
+      }
+    } catch (error) {
+      console.error('[TermsOfService] Error opening Terms of Service:', error);
+      Alert.alert('Error', 'Unable to open Terms of Service. Please try again.');
+    }
   };
 
   return (
@@ -189,14 +262,14 @@ export default function SettingsScreen({ onNavigateBack, onNavigateToChangePassw
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Privacy', 'Privacy policy will be implemented later')}
+            onPress={handlePrivacyPolicy}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Privacy Policy</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, { backgroundColor: colors.surface }]}
-            onPress={() => Alert.alert('Terms', 'Terms of service will be implemented later')}
+            onPress={handleTermsOfService}
           >
             <Text style={[styles.settingText, { color: colors.text }]}>Terms of Service</Text>
             <Text style={[styles.settingArrow, { color: colors.textSecondary }]}>›</Text>
