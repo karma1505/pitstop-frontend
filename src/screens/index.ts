@@ -16,5 +16,11 @@ export * from './customer';
 // Staff screens
 export * from './staff';
 
+// Vehicle screens
+export * from './vehicle';
+
+// Inventory screens
+export * from './inventory';
+
 // My Garage screens
-export * from './myGarage'; 
+export * from './myGarage';

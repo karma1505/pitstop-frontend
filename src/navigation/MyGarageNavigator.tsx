@@ -16,6 +16,11 @@ import {
   VehicleDetailScreen,
   VehicleFormScreen,
 } from '../screens/vehicle';
+import {
+  InventoryListScreen,
+  InventoryDetailScreen,
+  InventoryFormScreen,
+} from '../screens/inventory';
 
 interface MyGarageNavigatorProps {
   selectedCustomerId?: string | null;
@@ -24,6 +29,8 @@ interface MyGarageNavigatorProps {
   onSetSelectedStaffId?: (id: string | null) => void;
   selectedVehicleId?: string | null;
   onSetSelectedVehicleId?: (id: string | null) => void;
+  selectedInventoryId?: string | null;
+  onSetSelectedInventoryId?: (id: string | null) => void;
 }
 
 export default function MyGarageNavigator({
@@ -33,6 +40,8 @@ export default function MyGarageNavigator({
   onSetSelectedStaffId,
   selectedVehicleId,
   onSetSelectedVehicleId,
+  selectedInventoryId,
+  onSetSelectedInventoryId,
 }: MyGarageNavigatorProps) {
   const {
     myGarageScreen,
@@ -174,6 +183,49 @@ export default function MyGarageNavigator({
     navigateInMyGarage('vehicles');
   };
 
+  const handleNavigateToInventoryDetail = (itemId: string) => {
+    if (onSetSelectedInventoryId) {
+      onSetSelectedInventoryId(itemId);
+    }
+    navigateInMyGarage('inventoryDetail', { itemId });
+  };
+
+  const handleNavigateToAddInventory = () => {
+    if (onSetSelectedInventoryId) {
+      onSetSelectedInventoryId(null);
+    }
+    navigateInMyGarage('inventoryForm');
+  };
+
+  const handleNavigateToEditInventory = (itemId: string) => {
+    if (onSetSelectedInventoryId) {
+      onSetSelectedInventoryId(itemId);
+    }
+    navigateInMyGarage('inventoryForm', { itemId });
+  };
+
+  const handleInventoryDetailBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleInventoryDetailEdit = (itemId: string) => {
+    if (onSetSelectedInventoryId) {
+      onSetSelectedInventoryId(itemId);
+    }
+    navigateInMyGarage('inventoryForm', { itemId });
+  };
+
+  const handleInventoryFormBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleInventoryFormSuccess = () => {
+    if (onSetSelectedInventoryId) {
+      onSetSelectedInventoryId(null);
+    }
+    navigateInMyGarage('inventory');
+  };
+
   switch (myGarageScreen) {
     case 'dashboard':
       return <MyGarageDashboardScreen onNavigateBack={handleNavigateBack} />;
@@ -262,9 +314,36 @@ export default function MyGarageNavigator({
         />
       );
 
+    case 'inventory':
+      return (
+        <InventoryListScreen
+          onNavigateBack={handleNavigateBack}
+          onNavigateToInventoryDetail={handleNavigateToInventoryDetail}
+          onNavigateToAddInventory={handleNavigateToAddInventory}
+          onNavigateToEditInventory={handleNavigateToEditInventory}
+        />
+      );
+
+    case 'inventoryDetail':
+      return (
+        <InventoryDetailScreen
+          itemId={selectedInventoryId || myGarageParams?.itemId || ''}
+          onNavigateBack={handleInventoryDetailBack}
+          onNavigateToEdit={handleInventoryDetailEdit}
+        />
+      );
+
+    case 'inventoryForm':
+      return (
+        <InventoryFormScreen
+          itemId={selectedInventoryId || myGarageParams?.itemId || undefined}
+          onNavigateBack={handleInventoryFormBack}
+          onSaveSuccess={handleInventoryFormSuccess}
+        />
+      );
+
     // Placeholder screens for future implementation
     case 'jobcards':
-    case 'inventory':
     case 'financial':
     case 'revenue':
     case 'reports':

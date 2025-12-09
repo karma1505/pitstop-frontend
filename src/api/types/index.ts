@@ -75,4 +75,10 @@ export interface AuthResponse {
   };
   message: string;
   success: boolean;
-} 
+}
+
+// Re-export types from specific modules
+export * from './customer';
+export * from './vehicle';
+export * from './staff';
+export * from './inventory';

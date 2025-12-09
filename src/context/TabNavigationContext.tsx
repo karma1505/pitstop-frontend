@@ -12,6 +12,8 @@ export type MyGarageScreenType =
   | 'vehicleForm'
   | 'jobcards'
   | 'inventory'
+  | 'inventoryDetail'
+  | 'inventoryForm'
   | 'financial'
   | 'revenue'
   | 'staff'
