@@ -32,6 +32,7 @@ function AppContent() {
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(null);
+  const [selectedServiceCategoryId, setSelectedServiceCategoryId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [otpType, setOtpType] = useState<'FORGOT_PASSWORD' | 'LOGIN_OTP'>('FORGOT_PASSWORD');
@@ -281,6 +282,8 @@ function AppContent() {
           onSetSelectedVehicleId={setSelectedVehicleId}
           selectedInventoryId={selectedInventoryId}
           onSetSelectedInventoryId={setSelectedInventoryId}
+          selectedServiceCategoryId={selectedServiceCategoryId}
+          onSetSelectedServiceCategoryId={setSelectedServiceCategoryId}
           onNavigateToSettings={handleNavigateToSettings}
         />
         <StatusBar style={isDark ? "light" : "dark"} />

@@ -50,12 +50,20 @@ export default function MyGarageDashboardScreen({ onNavigateBack }: MyGarageDash
       enabled: true, // To be implemented
     },
     {
+      id: 'serviceCategories',
+      title: 'Service Catalogue',
+      icon: 'construct' as const,
+      description: 'Manage service categories',
+      onPress: () => navigateInMyGarage('serviceCategories'),
+      enabled: true,
+    },
+    {
       id: 'inventory',
       title: 'Inventory',
       icon: 'cube' as const,
       description: 'Manage parts and stock',
       onPress: () => navigateInMyGarage('inventory'),
-      enabled: true, // To be implemented
+      enabled: true,
     },
     {
       id: 'financial',

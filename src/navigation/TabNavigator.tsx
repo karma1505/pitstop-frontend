@@ -15,6 +15,8 @@ interface TabNavigatorProps {
   onSetSelectedVehicleId?: (id: string | null) => void;
   selectedInventoryId?: string | null;
   onSetSelectedInventoryId?: (id: string | null) => void;
+  selectedServiceCategoryId?: string | null;
+  onSetSelectedServiceCategoryId?: (id: string | null) => void;
   onNavigateToSettings?: () => void;
 }
 
@@ -27,6 +29,8 @@ export default function TabNavigator({
   onSetSelectedVehicleId,
   selectedInventoryId,
   onSetSelectedInventoryId,
+  selectedServiceCategoryId,
+  onSetSelectedServiceCategoryId,
   onNavigateToSettings,
 }: TabNavigatorProps) {
   const { activeTab, setActiveTab, navigateInMyGarage } = useTabNavigation();
@@ -63,6 +67,8 @@ export default function TabNavigator({
             onSetSelectedVehicleId={onSetSelectedVehicleId}
             selectedInventoryId={selectedInventoryId}
             onSetSelectedInventoryId={onSetSelectedInventoryId}
+            selectedServiceCategoryId={selectedServiceCategoryId}
+            onSetSelectedServiceCategoryId={onSetSelectedServiceCategoryId}
           />
         );
       case 'marketplace':

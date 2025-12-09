@@ -6,11 +6,13 @@ export { CustomerService } from './services/customerService';
 export { StaffService } from './services/staffService';
 export { VehicleService } from './services/vehicleService';
 export { InventoryService } from './services/inventoryService';
+export { ServiceCategoryService } from './services/serviceCategoryService';
 export * from './types';
 export * from './types/customer';
 export * from './types/staff';
 export * from './types/vehicle';
 export * from './types/inventory';
+export * from './types/service-category';
 export { ApiClient } from './client';
 
 // Legacy compatibility - export the old GarageApi for backward compatibility

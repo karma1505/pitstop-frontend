@@ -22,5 +22,8 @@ export * from './vehicle';
 // Inventory screens
 export * from './inventory';
 
+// Service Category screens
+export * from './serviceCategory';
+
 // My Garage screens
 export * from './myGarage';

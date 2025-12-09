@@ -21,6 +21,11 @@ import {
   InventoryDetailScreen,
   InventoryFormScreen,
 } from '../screens/inventory';
+import {
+  ServiceCategoryListScreen,
+  ServiceCategoryDetailScreen,
+  ServiceCategoryFormScreen,
+} from '../screens/serviceCategory';
 
 interface MyGarageNavigatorProps {
   selectedCustomerId?: string | null;
@@ -31,6 +36,8 @@ interface MyGarageNavigatorProps {
   onSetSelectedVehicleId?: (id: string | null) => void;
   selectedInventoryId?: string | null;
   onSetSelectedInventoryId?: (id: string | null) => void;
+  selectedServiceCategoryId?: string | null;
+  onSetSelectedServiceCategoryId?: (id: string | null) => void;
 }
 
 export default function MyGarageNavigator({
@@ -42,6 +49,8 @@ export default function MyGarageNavigator({
   onSetSelectedVehicleId,
   selectedInventoryId,
   onSetSelectedInventoryId,
+  selectedServiceCategoryId,
+  onSetSelectedServiceCategoryId,
 }: MyGarageNavigatorProps) {
   const {
     myGarageScreen,
@@ -226,6 +235,49 @@ export default function MyGarageNavigator({
     navigateInMyGarage('inventory');
   };
 
+  const handleNavigateToServiceCategoryDetail = (categoryId: string) => {
+    if (onSetSelectedServiceCategoryId) {
+      onSetSelectedServiceCategoryId(categoryId);
+    }
+    navigateInMyGarage('serviceCategoryDetail', { categoryId });
+  };
+
+  const handleNavigateToAddServiceCategory = () => {
+    if (onSetSelectedServiceCategoryId) {
+      onSetSelectedServiceCategoryId(null);
+    }
+    navigateInMyGarage('serviceCategoryForm');
+  };
+
+  const handleNavigateToEditServiceCategory = (categoryId: string) => {
+    if (onSetSelectedServiceCategoryId) {
+      onSetSelectedServiceCategoryId(categoryId);
+    }
+    navigateInMyGarage('serviceCategoryForm', { categoryId });
+  };
+
+  const handleServiceCategoryDetailBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleServiceCategoryDetailEdit = (categoryId: string) => {
+    if (onSetSelectedServiceCategoryId) {
+      onSetSelectedServiceCategoryId(categoryId);
+    }
+    navigateInMyGarage('serviceCategoryForm', { categoryId });
+  };
+
+  const handleServiceCategoryFormBack = () => {
+    goBackInMyGarage();
+  };
+
+  const handleServiceCategoryFormSuccess = () => {
+    if (onSetSelectedServiceCategoryId) {
+      onSetSelectedServiceCategoryId(null);
+    }
+    navigateInMyGarage('serviceCategories');
+  };
+
   switch (myGarageScreen) {
     case 'dashboard':
       return <MyGarageDashboardScreen onNavigateBack={handleNavigateBack} />;
@@ -339,6 +391,34 @@ export default function MyGarageNavigator({
           itemId={selectedInventoryId || myGarageParams?.itemId || undefined}
           onNavigateBack={handleInventoryFormBack}
           onSaveSuccess={handleInventoryFormSuccess}
+        />
+      );
+
+    case 'serviceCategories':
+      return (
+        <ServiceCategoryListScreen
+          onNavigateBack={handleNavigateBack}
+          onNavigateToDetail={handleNavigateToServiceCategoryDetail}
+          onNavigateToAdd={handleNavigateToAddServiceCategory}
+          onNavigateToEdit={handleNavigateToEditServiceCategory}
+        />
+      );
+
+    case 'serviceCategoryDetail':
+      return (
+        <ServiceCategoryDetailScreen
+          categoryId={selectedServiceCategoryId || myGarageParams?.categoryId || ''}
+          onNavigateBack={handleServiceCategoryDetailBack}
+          onNavigateToEdit={handleServiceCategoryDetailEdit}
+        />
+      );
+
+    case 'serviceCategoryForm':
+      return (
+        <ServiceCategoryFormScreen
+          categoryId={selectedServiceCategoryId || myGarageParams?.categoryId || undefined}
+          onNavigateBack={handleServiceCategoryFormBack}
+          onSaveSuccess={handleServiceCategoryFormSuccess}
         />
       );
 

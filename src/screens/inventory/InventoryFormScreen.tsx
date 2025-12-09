@@ -50,6 +50,26 @@ export default function InventoryFormScreen({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Reset form when switching to create mode (itemId becomes undefined)
+    useEffect(() => {
+        if (!itemId) {
+            setFormData({
+                itemCode: '',
+                itemName: '',
+                description: '',
+                category: '',
+                unit: '',
+                costPrice: '',
+                sellingPrice: '',
+                minStockLevel: '',
+                maxStockLevel: '',
+                initialQuantity: '0',
+                isActive: true,
+            });
+            setErrors({});
+        }
+    }, [itemId]);
+
     useEffect(() => {
         if (isEditing && itemId) {
             loadItem();
